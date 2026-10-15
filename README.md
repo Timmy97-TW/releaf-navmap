@@ -2,7 +2,7 @@
 
 A painting at the foot of every ReLEAF wiki subpage, under the title "Explore our project". Each thing in it opens a page. It takes the place of the page's Previous / Next row.
 
-Review page for the team (EN / 中文): https://timmy97-tw.github.io/releaf-navmap/
+Review page for the team (EN / 中文): https://timmy97-tw.github.io/releaf-navmap/ . Its "Suggest a change" chat (`assets/chat.js`) walks a student through their changes and builds a structured prompt to send to Timmy; it runs in the browser and sends nothing.
 
 ## Two pictures
 
