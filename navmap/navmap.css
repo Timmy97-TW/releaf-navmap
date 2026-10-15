@@ -1,5 +1,5 @@
 /* ReLEAF navigation picture. Sits at the foot of every subpage, after the
-   page's own content and before Previous / Next. */
+   page's own content, in place of Previous / Next. */
 
 .navmap {
   --nm-ink: #1d1d1f; --nm-ink-2: #424245; --nm-ink-3: #6e6e73;
@@ -11,66 +11,55 @@
 .navmap .nm-stage { position: relative; }
 .navmap svg { display: block; width: 100%; height: auto; border-radius: 22px; overflow: hidden; }
 
-.navmap .nm-spot { cursor: pointer; outline: none; }
+.navmap .nm-spot { cursor: pointer; outline: none; transition: opacity .25s; }
 .navmap .nm-spot.nm-is-here { cursor: default; }
 .navmap .nm-hit { fill: #000; fill-opacity: 0; }
-.navmap .nm-lift, .navmap .nm-reactor { transform-box: fill-box; transform-origin: 50% 100%;
-  transition: transform .28s cubic-bezier(.3, 1.5, .5, 1), opacity .22s; }
-.navmap .nm-spot { transition: opacity .22s; }
-.navmap .nm-is-here .nm-lift { opacity: .45; }
+.navmap .nm-is-here .nm-art { opacity: .5; }
 
-/* A: what you point at rises; the rest steps back */
-.nm-a.nm-has-on .nm-spot:not(.nm-on) { opacity: .4; }
-.nm-a.nm-has-on .nm-reactor.nm-on .nm-spot { opacity: 1; }
-.nm-a .nm-spot.nm-on .nm-lift { transform: translateY(-10px) scale(1.03); }
-.nm-a .nm-reactor.nm-on { transform: translateY(-10px) scale(1.02); }
-.nm-a .nm-spot[data-key=plants].nm-on .nm-lift { transform: none; }
+/* the thing under the pointer is traced in white; nothing moves */
+.navmap .nm-spot.nm-on .nm-art,
+.navmap .nm-spot.nm-hint .nm-art { filter: var(--nm-halo); }
+.navmap .nm-spot[data-page=plant].nm-on .nm-art { filter: none; opacity: .85; }
+.nm-b .nm-spot[data-page=plant].nm-hint .nm-art { filter: none; }
+/* the whole wiki: what is not lit steps back a little */
+.nm-w.nm-has-on .nm-spot:not(.nm-on) { opacity: .55; }
 
-/* B: a white halo traces what you point at */
-.nm-b .nm-spot.nm-on .nm-lift { filter: var(--nm-halo); transform: translateY(-6px); }
-.nm-b .nm-reactor.nm-on .nm-spot .nm-lift { filter: var(--nm-halo); }
-.nm-b .nm-reactor.nm-on .nm-spot.nm-on .nm-lift { transform: none; }
-.nm-b .nm-reactor.nm-on { transform: translateY(-6px); }
-.nm-b .nm-spot[data-key=plants].nm-on .nm-lift { filter: none; transform: none; }
-.nm-b .nm-spot[data-key=plants].nm-on .nm-sprite { opacity: .82; }
+/* a small name tag over the thing */
+.navmap .nm-tag { position: absolute; z-index: 4; padding: 4px 11px; border-radius: 999px; white-space: nowrap; pointer-events: none;
+  background: rgba(29, 29, 31, .78); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: -.005em;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; transform: translateY(4px); transition: opacity .15s, transform .15s; }
+.navmap .nm-tag.nm-show { opacity: 1; transform: none; }
 
-/* C: dusk; what you point at comes into daylight */
-.nm-c .nm-day { opacity: 0; transition: opacity .3s; }
-.nm-c .nm-spot.nm-on .nm-day, .nm-c .nm-reactor.nm-on .nm-day { opacity: 1; }
-.nm-c .nm-spot.nm-on .nm-lift { transform: translateY(-4px); }
-.nm-c .nm-spot[data-key=plants].nm-on .nm-lift { transform: none; }
+/* the caption under the picture: always the same height, so nothing jumps */
+.navmap .nm-caption { margin: 14px 2px 0; min-height: 3.1em; font-size: 15px; line-height: 1.55; color: var(--nm-ink-2); }
+.navmap .nm-caption strong { color: var(--nm-ink); margin-right: .45em; }
+.navmap .nm-caption .nm-rest { color: var(--nm-ink-3); }
 
-/* the names, in the painting's order */
-.navmap .nm-names { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+/* the names */
+.navmap .nm-names { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
 .navmap .nm-names a { display: block; padding: 6px 13px; border-radius: 999px; background: var(--nm-well); color: var(--nm-ink-2);
   font-size: 14px; font-weight: 500; text-decoration: none; transition: background .15s, color .15s; }
 .navmap .nm-names a.nm-on { background: var(--nm-ink); color: #fff; }
 .navmap .nm-names a.nm-is-here { background: transparent; color: var(--nm-ink-3); box-shadow: inset 0 0 0 1px #d2d2d7; cursor: default; }
-
-/* the card */
-.navmap .nm-card { position: absolute; z-index: 5; width: 310px; padding: 15px 17px 16px; border-radius: 16px;
-  background: rgba(255, 255, 255, .96); color: var(--nm-ink); text-decoration: none;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 12px 34px rgba(0, 0, 0, .16);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  opacity: 0; visibility: hidden; transform: translateY(6px);
-  transition: opacity .16s, transform .16s, visibility 0s .16s; }
-.navmap .nm-card.nm-show { opacity: 1; visibility: visible; transform: none; transition: opacity .16s, transform .16s; }
-.navmap .nm-card strong { display: block; font-size: 17px; margin-bottom: 4px; letter-spacing: -.01em; }
-.navmap .nm-card span { display: block; font-size: 14px; line-height: 1.5; color: var(--nm-ink-2); }
-.navmap .nm-card .nm-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--nm-ink-3); margin-bottom: 2px; }
-.navmap .nm-card .nm-arrow { display: inline; color: var(--nm-leaf); }
-.navmap .nm-card.nm-docked { position: relative; width: auto; margin-top: 12px; transform: none; box-shadow: none; background: var(--nm-well); }
-.navmap .nm-card.nm-docked:not(.nm-show) { display: none; }
+.navmap .nm-groups { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin-top: 10px; }
+.navmap .nm-group h3 { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--nm-ink-3);
+  cursor: default; outline: none; transition: color .15s; }
+.navmap .nm-group h3.nm-on { color: var(--nm-ink); }
+.navmap .nm-groups .nm-names { flex-direction: column; align-items: flex-start; gap: 5px; margin: 0; }
+.navmap .nm-groups .nm-names a { padding: 4px 11px; font-size: 13px; }
 
 .navmap .nm-here { position: absolute; transform: translate(-50%, calc(-100% - 8px)); padding: 3px 10px; border-radius: 999px;
-  background: var(--nm-ink); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none; }
-.navmap .nm-here::after { content: ""; position: absolute; left: 50%; bottom: -4px; margin-left: -4px;
-  border: 4px solid transparent; border-bottom: 0; border-top-color: var(--nm-ink); }
+  background: #fff; color: var(--nm-ink); box-shadow: 0 1px 4px rgba(0, 0, 0, .18); font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none; }
 
+@media (max-width: 900px) {
+  .navmap .nm-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 640px) {
   .navmap svg { border-radius: 14px; }
-  .navmap .nm-here { font-size: 10px; padding: 2px 7px; }
+  .navmap .nm-here, .navmap .nm-tag { font-size: 11px; padding: 2px 8px; }
   .navmap .nm-names a { font-size: 13px; padding: 5px 11px; }
+  .navmap .nm-caption { min-height: 4.6em; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .navmap * { transition: none !important; }

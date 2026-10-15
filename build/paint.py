@@ -25,8 +25,8 @@ from scipy.spatial import ConvexHull
 sys.path.insert(0, str(Path(__file__).parent))
 from vision_details import Painter  # noqa: E402
 
-SRC = Path(sys.argv[1])
-OUT = Path(sys.argv[2])
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else None
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else None
 FONT = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 
 # her colours, sampled from the painting (see build/safe-route.py)
@@ -71,14 +71,23 @@ def desun(img):
     return img * (1 - a) + out * a
 
 
-VALLEY = desun(np.asarray(Image.open(SRC / "Zoomed out w_o green dots.PNG").convert("RGB"), dtype=np.float64))
+VALLEY = None
+
+
+def load_valley(src):
+    global VALLEY
+    VALLEY = desun(np.asarray(Image.open(Path(src) / "Zoomed out w_o green dots.PNG").convert("RGB"), dtype=np.float64))
 
 
 def ground(W, H, y0):
     """A W x H window of her valley, her row y0 at the top."""
     K = W / VALLEY.shape[1]
-    crop = Image.fromarray(VALLEY[y0:y0 + int(round(H / K))].astype(np.uint8)).resize((W, H), Image.LANCZOS)
-    return np.asarray(crop, dtype=np.float64).copy()
+    rows = min(int(round(H / K)), VALLEY.shape[0] - y0)
+    hh = int(round(rows * K))
+    crop = Image.fromarray(VALLEY[y0:y0 + rows].astype(np.uint8)).resize((W, hh), Image.LANCZOS)
+    out = np.empty((H, W, 3)); out[:] = PALE
+    out[:hh] = np.asarray(crop, dtype=np.float64)
+    return out
 
 
 # ------------------------------------------------------- sprite painter ----
@@ -187,28 +196,43 @@ def farmer(P, x, y, h):
     P.poly([(x - 0.31 * h, y - 0.885 * h), (x + 0.31 * h, y - 0.885 * h), (x + 0.21 * h, y - 0.85 * h), (x - 0.21 * h, y - 0.85 * h)], (186, 158, 98), rough=0.2)
 
 
-def student(P, x, y, h):
-    """A student in an open lab coat over the team's green ReLEAF shirt."""
-    coat, coat_d = (242, 242, 234), (212, 216, 208)
-    shirt = (58, 124, 72)
+def student(P, x, y, h, coat=True, hair=(58, 44, 36), shirt=(58, 124, 72), long_hair=False):
+    """A student in an open lab coat over the team's green ReLEAF shirt
+    (coat=False: the shirt alone)."""
+    wear = coat
+    coat, coat_d = ((242, 242, 234), (212, 216, 208)) if wear else (shirt, tuple(c * 0.82 for c in shirt))
     for d in (-1, 1):
         P.poly([(x + d * 0.015 * h, y - 0.45 * h), (x + d * 0.12 * h, y - 0.45 * h), (x + d * 0.115 * h, y - 0.03 * h), (x + d * 0.025 * h, y - 0.03 * h)], (52, 60, 84), rough=0.25)
         P.ellipse(x + d * 0.075 * h, y - 0.015 * h, 0.07 * h, 0.03 * h, (66, 66, 72), rough=0.2)
-    P.poly([(x - 0.2 * h, y - 0.77 * h), (x + 0.2 * h, y - 0.77 * h), (x + 0.235 * h, y - 0.3 * h), (x - 0.235 * h, y - 0.3 * h)], coat, rough=0.35)
-    P.poly([(x + 0.1 * h, y - 0.77 * h), (x + 0.2 * h, y - 0.77 * h), (x + 0.235 * h, y - 0.3 * h), (x + 0.12 * h, y - 0.3 * h)], coat_d, rough=0.3)
-    P.poly([(x - 0.095 * h, y - 0.77 * h), (x + 0.095 * h, y - 0.77 * h), (x + 0.085 * h, y - 0.32 * h), (x - 0.085 * h, y - 0.32 * h)], shirt, rough=0.3)
-    P.text("ReLEAF", x, y - 0.635 * h, 0.034 * h, (236, 244, 220))
-    P.poly([(x, y - 0.48 * h), (x - 0.04 * h, y - 0.525 * h), (x - 0.01 * h, y - 0.57 * h)], (176, 214, 110), rough=0.15)
-    P.poly([(x, y - 0.48 * h), (x + 0.04 * h, y - 0.525 * h), (x + 0.01 * h, y - 0.57 * h)], (150, 196, 92), rough=0.15)
-    P.poly([(x - 0.095 * h, y - 0.77 * h), (x - 0.04 * h, y - 0.77 * h), (x - 0.09 * h, y - 0.68 * h)], coat, rough=0.15)
-    P.poly([(x + 0.095 * h, y - 0.77 * h), (x + 0.04 * h, y - 0.77 * h), (x + 0.09 * h, y - 0.68 * h)], coat_d, rough=0.15)
-    P.stroke([(x - 0.21 * h, y - 0.73 * h), (x - 0.27 * h, y - 0.44 * h)], 0.09 * h, coat, rough=0.2)
-    P.ellipse(x - 0.27 * h, y - 0.42 * h, 0.042 * h, 0.042 * h, SKIN, rough=0.2, n=10)
-    P.stroke([(x + 0.21 * h, y - 0.73 * h), (x + 0.27 * h, y - 0.56 * h), (x + 0.15 * h, y - 0.5 * h)], 0.09 * h, coat_d, rough=0.2)
+    if not wear:
+        P.poly([(x - 0.17 * h, y - 0.77 * h), (x + 0.17 * h, y - 0.77 * h), (x + 0.155 * h, y - 0.42 * h), (x - 0.155 * h, y - 0.42 * h)], shirt, rough=0.35)
+        P.poly([(x + 0.08 * h, y - 0.77 * h), (x + 0.17 * h, y - 0.77 * h), (x + 0.155 * h, y - 0.42 * h), (x + 0.09 * h, y - 0.42 * h)], coat_d, rough=0.3)
+        P.text("ReLEAF", x, y - 0.66 * h, 0.034 * h, (236, 244, 220))
+        P.poly([(x, y - 0.5 * h), (x - 0.04 * h, y - 0.545 * h), (x - 0.01 * h, y - 0.59 * h)], (176, 214, 110), rough=0.15)
+        P.poly([(x, y - 0.5 * h), (x + 0.04 * h, y - 0.545 * h), (x + 0.01 * h, y - 0.59 * h)], (150, 196, 92), rough=0.15)
+        P.stroke([(x - 0.18 * h, y - 0.73 * h), (x - 0.22 * h, y - 0.47 * h)], 0.08 * h, shirt, rough=0.2)
+        P.ellipse(x - 0.22 * h, y - 0.45 * h, 0.04 * h, 0.04 * h, SKIN, rough=0.2, n=10)
+        P.stroke([(x + 0.18 * h, y - 0.73 * h), (x + 0.22 * h, y - 0.47 * h)], 0.08 * h, coat_d, rough=0.2)
+        P.ellipse(x + 0.22 * h, y - 0.45 * h, 0.04 * h, 0.04 * h, SKIN, rough=0.2, n=10)
+    else:
+        P.poly([(x - 0.2 * h, y - 0.77 * h), (x + 0.2 * h, y - 0.77 * h), (x + 0.235 * h, y - 0.3 * h), (x - 0.235 * h, y - 0.3 * h)], coat, rough=0.35)
+        P.poly([(x + 0.1 * h, y - 0.77 * h), (x + 0.2 * h, y - 0.77 * h), (x + 0.235 * h, y - 0.3 * h), (x + 0.12 * h, y - 0.3 * h)], coat_d, rough=0.3)
+        P.poly([(x - 0.095 * h, y - 0.77 * h), (x + 0.095 * h, y - 0.77 * h), (x + 0.085 * h, y - 0.32 * h), (x - 0.085 * h, y - 0.32 * h)], shirt, rough=0.3)
+        P.text("ReLEAF", x, y - 0.635 * h, 0.034 * h, (236, 244, 220))
+        P.poly([(x, y - 0.48 * h), (x - 0.04 * h, y - 0.525 * h), (x - 0.01 * h, y - 0.57 * h)], (176, 214, 110), rough=0.15)
+        P.poly([(x, y - 0.48 * h), (x + 0.04 * h, y - 0.525 * h), (x + 0.01 * h, y - 0.57 * h)], (150, 196, 92), rough=0.15)
+        P.poly([(x - 0.095 * h, y - 0.77 * h), (x - 0.04 * h, y - 0.77 * h), (x - 0.09 * h, y - 0.68 * h)], coat, rough=0.15)
+        P.poly([(x + 0.095 * h, y - 0.77 * h), (x + 0.04 * h, y - 0.77 * h), (x + 0.09 * h, y - 0.68 * h)], coat_d, rough=0.15)
+        P.stroke([(x - 0.21 * h, y - 0.73 * h), (x - 0.27 * h, y - 0.44 * h)], 0.09 * h, coat, rough=0.2)
+        P.ellipse(x - 0.27 * h, y - 0.42 * h, 0.042 * h, 0.042 * h, SKIN, rough=0.2, n=10)
+        P.stroke([(x + 0.21 * h, y - 0.73 * h), (x + 0.27 * h, y - 0.56 * h), (x + 0.15 * h, y - 0.5 * h)], 0.09 * h, coat_d, rough=0.2)
     P.ellipse(x, y - 0.865 * h, 0.1 * h, 0.11 * h, SKIN, rough=0.25, n=14)
     P.poly([(x - 0.105 * h, y - 0.85 * h), (x - 0.11 * h, y - 0.93 * h), (x - 0.06 * h, y - 0.985 * h), (x + 0.04 * h, y - 0.99 * h),
             (x + 0.105 * h, y - 0.94 * h), (x + 0.105 * h, y - 0.86 * h), (x + 0.07 * h, y - 0.91 * h), (x - 0.03 * h, y - 0.92 * h), (x - 0.08 * h, y - 0.88 * h)],
-           (58, 44, 36), rough=0.3)
+           hair, rough=0.3)
+    if long_hair:
+        P.poly([(x - 0.105 * h, y - 0.9 * h), (x - 0.13 * h, y - 0.72 * h), (x - 0.06 * h, y - 0.74 * h), (x - 0.07 * h, y - 0.88 * h)], hair, rough=0.25)
+        P.poly([(x + 0.105 * h, y - 0.9 * h), (x + 0.13 * h, y - 0.72 * h), (x + 0.06 * h, y - 0.74 * h), (x + 0.07 * h, y - 0.88 * h)], hair, rough=0.25)
     for d in (-1, 1):
         P.ellipse(x + d * 0.037 * h, y - 0.86 * h, 0.011 * h, 0.013 * h, (64, 48, 40), rough=0.05, n=8)
     P.stroke([(x - 0.03 * h, y - 0.815 * h), (x, y - 0.805 * h), (x + 0.03 * h, y - 0.815 * h)], 0.009 * h, (150, 92, 72), rough=0.05)
@@ -383,6 +407,8 @@ def build(name):
     return layout
 
 
-all_layouts = {n: build(n) for n in ("a", "b", "c")}
-(OUT.parent / "layout.js").write_text("window.NAVMAP_LAYOUT = " + json.dumps(all_layouts) + ";\n")
-print("wrote", OUT)
+if __name__ == "__main__":
+    load_valley(SRC)
+    all_layouts = {n: build(n) for n in ("b",)}
+    (OUT.parent / "layout.js").write_text("window.NAVMAP_LAYOUT = " + json.dumps(all_layouts) + ";\n")
+    print("wrote", OUT)
