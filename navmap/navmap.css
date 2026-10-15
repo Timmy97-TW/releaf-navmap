@@ -1,0 +1,77 @@
+/* ReLEAF navigation picture. Sits at the foot of every subpage, after the
+   page's own content and before Previous / Next. */
+
+.navmap {
+  --nm-ink: #1d1d1f; --nm-ink-2: #424245; --nm-ink-3: #6e6e73;
+  --nm-leaf: #2f7d4a; --nm-well: #f5f5f7;
+  position: relative;
+  margin: 72px 0 0;
+}
+.navmap .nm-title { font-size: clamp(1.4rem, 2.2vw, 1.9rem); letter-spacing: -.015em; margin: 0 0 18px; color: var(--nm-ink); }
+.navmap .nm-stage { position: relative; }
+.navmap svg { display: block; width: 100%; height: auto; border-radius: 22px; overflow: hidden; }
+
+.navmap .nm-spot { cursor: pointer; outline: none; }
+.navmap .nm-spot.nm-is-here { cursor: default; }
+.navmap .nm-hit { fill: #000; fill-opacity: 0; }
+.navmap .nm-lift, .navmap .nm-reactor { transform-box: fill-box; transform-origin: 50% 100%;
+  transition: transform .28s cubic-bezier(.3, 1.5, .5, 1), opacity .22s; }
+.navmap .nm-spot { transition: opacity .22s; }
+.navmap .nm-is-here .nm-lift { opacity: .45; }
+
+/* A: what you point at rises; the rest steps back */
+.nm-a.nm-has-on .nm-spot:not(.nm-on) { opacity: .4; }
+.nm-a.nm-has-on .nm-reactor.nm-on .nm-spot { opacity: 1; }
+.nm-a .nm-spot.nm-on .nm-lift { transform: translateY(-10px) scale(1.03); }
+.nm-a .nm-reactor.nm-on { transform: translateY(-10px) scale(1.02); }
+.nm-a .nm-spot[data-key=plants].nm-on .nm-lift { transform: none; }
+
+/* B: a white halo traces what you point at */
+.nm-b .nm-spot.nm-on .nm-lift { filter: var(--nm-halo); transform: translateY(-6px); }
+.nm-b .nm-reactor.nm-on .nm-spot .nm-lift { filter: var(--nm-halo); }
+.nm-b .nm-reactor.nm-on .nm-spot.nm-on .nm-lift { transform: none; }
+.nm-b .nm-reactor.nm-on { transform: translateY(-6px); }
+.nm-b .nm-spot[data-key=plants].nm-on .nm-lift { filter: none; transform: none; }
+.nm-b .nm-spot[data-key=plants].nm-on .nm-sprite { opacity: .82; }
+
+/* C: dusk; what you point at comes into daylight */
+.nm-c .nm-day { opacity: 0; transition: opacity .3s; }
+.nm-c .nm-spot.nm-on .nm-day, .nm-c .nm-reactor.nm-on .nm-day { opacity: 1; }
+.nm-c .nm-spot.nm-on .nm-lift { transform: translateY(-4px); }
+.nm-c .nm-spot[data-key=plants].nm-on .nm-lift { transform: none; }
+
+/* the names, in the painting's order */
+.navmap .nm-names { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.navmap .nm-names a { display: block; padding: 6px 13px; border-radius: 999px; background: var(--nm-well); color: var(--nm-ink-2);
+  font-size: 14px; font-weight: 500; text-decoration: none; transition: background .15s, color .15s; }
+.navmap .nm-names a.nm-on { background: var(--nm-ink); color: #fff; }
+.navmap .nm-names a.nm-is-here { background: transparent; color: var(--nm-ink-3); box-shadow: inset 0 0 0 1px #d2d2d7; cursor: default; }
+
+/* the card */
+.navmap .nm-card { position: absolute; z-index: 5; width: 310px; padding: 15px 17px 16px; border-radius: 16px;
+  background: rgba(255, 255, 255, .96); color: var(--nm-ink); text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 12px 34px rgba(0, 0, 0, .16);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  opacity: 0; visibility: hidden; transform: translateY(6px);
+  transition: opacity .16s, transform .16s, visibility 0s .16s; }
+.navmap .nm-card.nm-show { opacity: 1; visibility: visible; transform: none; transition: opacity .16s, transform .16s; }
+.navmap .nm-card strong { display: block; font-size: 17px; margin-bottom: 4px; letter-spacing: -.01em; }
+.navmap .nm-card span { display: block; font-size: 14px; line-height: 1.5; color: var(--nm-ink-2); }
+.navmap .nm-card .nm-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--nm-ink-3); margin-bottom: 2px; }
+.navmap .nm-card .nm-arrow { display: inline; color: var(--nm-leaf); }
+.navmap .nm-card.nm-docked { position: relative; width: auto; margin-top: 12px; transform: none; box-shadow: none; background: var(--nm-well); }
+.navmap .nm-card.nm-docked:not(.nm-show) { display: none; }
+
+.navmap .nm-here { position: absolute; transform: translate(-50%, calc(-100% - 8px)); padding: 3px 10px; border-radius: 999px;
+  background: var(--nm-ink); color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: none; }
+.navmap .nm-here::after { content: ""; position: absolute; left: 50%; bottom: -4px; margin-left: -4px;
+  border: 4px solid transparent; border-bottom: 0; border-top-color: var(--nm-ink); }
+
+@media (max-width: 640px) {
+  .navmap svg { border-radius: 14px; }
+  .navmap .nm-here { font-size: 10px; padding: 2px 7px; }
+  .navmap .nm-names a { font-size: 13px; padding: 5px 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navmap * { transition: none !important; }
+}
