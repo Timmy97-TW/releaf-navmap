@@ -63,35 +63,27 @@ h1 { font-size: clamp(2rem, 4.6vw, 3.2rem); line-height: 1.08; letter-spacing: -
 <div class="bar"><div class="wrap">
   <b>ReLEAF navigation map</b>
   <span class="tabs"><a href="index.html">Diagram</a><a href="art.html" aria-current="page">Painted</a><a href="scenes.html">Scenes</a></span>
-  <nav><a href="#page">Page map</a><a href="#all">Whole valley</a><a href="#logic">The logic</a><a href="reference/jacquelyn-valley/">Jacquelyn's valley</a></nav>
+  <nav><a href="#all">The valley</a><a href="#logic">The logic</a><a href="scenes.html">Page scenes</a><a href="reference/jacquelyn-valley/">Jacquelyn's valley</a></nav>
 </div></div>
 
 <header class="wrap hero">
   <p class="eyebrow">Navigation map · painted version</p>
   <h1>Every page is a place in one valley.</h1>
-  <p class="lede">The same two maps as the diagram, as one picture in the manner of the homepage's vision painting. No words are painted into it: every page is a thing you can recognise, placed where it belongs in the project's story. The pin marks the page you are on. Point at any place, or move through them with the arrow keys, and dusk falls on everything but it and the pages it links to.</p>
+  <p class="lede">The foot of the Description page: the whole project as one valley in the manner of the homepage's vision painting. No words are painted into it; every page is a thing you can recognise, placed where it belongs in the project's story, and the pin marks Description itself. Point at any place, or move through them with the arrow keys, and dusk falls on everything but it and the pages it links to. Every other page ends on its own scene, on the Scenes tab.</p>
 </header>
 
-<section class="block" id="page"><div class="wrap">
-  <h2>In a subpage</h2>
-  <p class="sec-lede">The page you are on stands under the pin in the middle of the road. What it builds on is down the road to the left, where it leads is to the right; the chevrons on the road point the way. The names and the reason for each link sit under the picture, and pointing at either the place or its line lights the other. The solid route marks the page to read next.</p>
+<section class="block" id="all"><div class="wrap">
+  <h2>At the foot of Description</h2>
+  <p class="sec-lede">All 27 pages stand in one landscape, each as the thing it is about, placed so that the valley tells the project's story from left to right: the village, the lab, the studio, the yard, the field, the town. One road joins everything; the river crosses between the yard and the field.</p>
   <div class="mock">
-    <div class="mock__tools">
-      <label for="here">Reading</label>
-      <select id="here"></select>
-    </div>
     <div class="mock__page">
       <div class="ghost" aria-hidden="true"><h3>Last section of the page</h3><p></p><p></p><p></p><p></p></div>
-      <section class="navmap" id="pagemap" data-art="page" data-local data-manual data-here="description" data-root="https://timmy97-tw.github.io/releaf-wiki/"></section>
       <section class="navmap" id="allmap" data-art="all" data-local data-manual data-here="description" data-root="https://timmy97-tw.github.io/releaf-wiki/"></section>
     </div>
   </div>
 </div></section>
 
-<section class="block" id="all"><div class="wrap">
-  <h2>The whole valley</h2>
-  <p class="sec-lede">The second picture above. All 27 pages stand in one landscape, each as the thing it is about, placed so that the valley tells the project's story from left to right. One road joins everything; the river crosses between the yard and the field. At rest the valley quietly shows the links of the page you are on. Pointing at any place dims the valley to dusk and lifts that place and every page linked to it into the light, with the routes between them; the caption under the picture lists those links with their reasons. On a phone, one tap lights a place and a second tap opens it.</p>
-</div></section>
+
 
 <section class="block" id="logic"><div class="wrap">
   <h2>The logic of the picture</h2>
@@ -122,28 +114,12 @@ h1 { font-size: clamp(2rem, 4.6vw, 3.2rem); line-height: 1.08; letter-spacing: -
 <script src="assets/navmap/art.js"></script>
 <script>
 (function () {
-  var D = window.NAVMAP_DATA;
-  var sel = document.getElementById('here');
-  D.sections.forEach(function (s) {
-    var og = document.createElement('optgroup'); og.label = s.name;
-    D.pages.forEach(function (p) { if (p.section !== s.id) return; var o = document.createElement('option'); o.value = p.slug; o.textContent = p.name; og.appendChild(o); });
-    sel.appendChild(og);
-  });
-  var pm = document.getElementById('pagemap'), am = document.getElementById('allmap');
-  function go(slug) {
-    sel.value = slug;
-    pm.setAttribute('data-here', slug); am.setAttribute('data-here', slug);
-    NavMapArt.mount(pm); NavMapArt.mount(am);
-    try { history.replaceState(null, '', '#' + slug); } catch (e) {}
-  }
-  sel.addEventListener('change', function () { go(sel.value); });
+  var am = document.getElementById('allmap');
+  NavMapArt.mount(am);
   document.addEventListener('navmap:go', function (e) {
-    if (!e.detail) return;
-    go(e.detail);
-    try { pm.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (err) {}
+    if (!e.detail || e.detail === 'description') return;
+    location.href = 'scenes.html#' + e.detail;
   });
-  var start = (location.hash || '').slice(1);
-  go(D.pages.some(function (p) { return p.slug === start; }) ? start : 'description');
 })();
 </script>
 </body>

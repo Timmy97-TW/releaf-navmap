@@ -623,7 +623,7 @@
     root.innerHTML = '';
     var hereSec = PAGE[here] ? SEC[PAGE[here].section] : null;
     if (hereSec) { root.style.setProperty('--s-ink', hereSec.ink); root.style.setProperty('--glow', hereSec.line); }
-    head(root, 'Every page', 'The whole valley', 'Read it left to right: the village, the lab, the studio, the yard, the field, the town.');
+    head(root, '', 'Explore around ' + (PAGE[here] ? PAGE[here].name : 'ReLEAF'), '');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
     var inner = h('div', 'nma-inner'); scroller.appendChild(inner);

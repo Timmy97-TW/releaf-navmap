@@ -84,3 +84,14 @@
 .nma .nma-lanes--scene { grid-template-columns: 1fr auto 1fr; }
 .nma .nma-lanecol--peer { min-width: 200px; }
 @media (max-width: 760px) { .nma .nma-inner--scene { width: 1100px; } .nma .nma-lanes--scene { grid-template-columns: 1fr; } }
+
+/* the page's own thing lights up when the scene first comes into view */
+.nma.nma-waiting .nma-place.nma-is-here .nma-art { filter: none; }
+.nma.nma-waiting .nma-beacon { opacity: 0; }
+.nma .nma-beacon { transition: opacity .8s ease .6s; }
+.nma.nma-arrive .nma-place.nma-is-here .nma-art { animation: nma-glow-in 1.6s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes nma-glow-in {
+  0% { filter: drop-shadow(0 0 0 transparent) drop-shadow(0 0 0 transparent); }
+  55% { filter: drop-shadow(0 0 18px var(--glow, #8ddc5a)) drop-shadow(0 0 70px var(--glow, #8ddc5a)); }
+  100% { filter: drop-shadow(0 0 12px var(--glow, #8ddc5a)) drop-shadow(0 0 40px color-mix(in srgb, var(--glow, #8ddc5a) 60%, transparent)); }
+}
