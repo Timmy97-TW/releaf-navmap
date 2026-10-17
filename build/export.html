@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- Draws one place on a transparent 1000 x 1000 canvas, for export.
+     build/export.py opens this with ?p=<slug> in headless Chrome and screenshots it.
+     With ?p=manifest it prints the JSON manifest instead (bbox and scale of every place). -->
+<html><head><meta charset="utf-8"><title>export</title>
+<style>html,body{margin:0;background:transparent}svg{display:block;width:1000px;height:1000px}#m{font:12px monospace;white-space:pre}</style></head>
+<body>
+<script src="../assets/navmap/navmap-data.js"></script>
+<script src="../assets/navmap/art.js"></script>
+<script>
+(function () {
+  var A = NavMapArt.lib, q = new URLSearchParams(location.search), slug = q.get('p');
+  var CANVAS = 1000, PAD = 50, BASE = 940;   // every place stands on the same baseline, inside the same margin
+  function measure(k) {
+    // draw at scale 1, measure, then choose the scale that fills the canvas
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + CANVAS + ' ' + CANVAS);
+    svg.innerHTML = '<g id="g" transform="translate(500,700)">' + A.PLACE[k].draw() + '</g>';
+    document.body.appendChild(svg);
+    var bb = svg.querySelector('#g').getBBox();
+    document.body.removeChild(svg);
+    var s = Math.min((CANVAS - 2 * PAD) / bb.width, (CANVAS - 2 * PAD) / bb.height);
+    // the shadow lies on the ground around (0,0); keep the ground line at BASE
+    var ground = 0;   // the place's own origin is its ground contact
+    return { bbox: { x: bb.x, y: bb.y, w: bb.width, h: bb.height }, scale: s, cx: -(bb.x + bb.width / 2), ground: ground };
+  }
+  if (slug === 'manifest') {
+    var m = { canvas: CANVAS, baseline: BASE, pad: PAD, places: {} };
+    A.ORDER.forEach(function (k) {
+      var r = measure(k), p = A.PAGE[k];
+      // translate so the drawing's horizontal centre is at 500 and its lowest point (bottom of bbox) sits at BASE
+      var ty = BASE - (r.bbox.y + r.bbox.h) * r.scale;
+      m.places[k] = { name: p.name, section: p.section, file: 'places/' + k + '.png', scale: +r.scale.toFixed(4), tx: +(500 + r.cx * r.scale).toFixed(1), ty: +ty.toFixed(1), bbox: r.bbox, reach: A.PLACE[k].r };
+    });
+    var pre = document.createElement('pre'); pre.id = 'm'; pre.textContent = JSON.stringify(m); document.body.appendChild(pre);
+    return;
+  }
+  if (!A.PLACE[slug]) return;
+  var r = measure(slug), ty = BASE - (r.bbox.y + r.bbox.h) * r.scale, tx = 500 + r.cx * r.scale;
+  A.setSeed(7 + slug.length);
+  document.body.innerHTML += '<svg viewBox="0 0 ' + CANVAS + ' ' + CANVAS + '" xmlns="http://www.w3.org/2000/svg"><g transform="translate(' + tx + ',' + ty + ') scale(' + r.scale + ')">' + A.PLACE[slug].draw() + '</g></svg>';
+})();
+</script>
+</body></html>

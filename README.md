@@ -94,3 +94,19 @@ In `navmap-data.js`, `links[page]` is the list of related pages, in order. Each 
 - `next`: `true` on exactly one `out` link per page, the *Read next* tag.
 
 Both maps read the same list, so a change here shows in both.
+
+## Hand-over for the team's drawings
+
+`python3 build/export.py` (needs Chrome, python-pptx, Pillow, and a static
+server on :8864) writes `exports/`:
+
+- `places/<slug>.png`: each of the 27 places on a 1000 x 1000 transparent
+  canvas, centred at x=500, standing on the baseline y=940.
+- `manifest.json`: for every place its page, section, the scale and offset
+  that put the drawing on that canvas, and its footprint.
+- `ReLEAF-navmap-places.pptx`: one slide per place, our drawing on the left,
+  a blank frame of the same size on the right for a student to draw in.
+
+A student's drawing comes back as `<slug>.png`, same canvas, same baseline,
+transparent, no words. Drop it into `exports/places/` and the scene code can
+swap the vector place for the image at the same spot.

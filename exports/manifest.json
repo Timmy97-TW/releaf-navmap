@@ -1,0 +1,450 @@
+{
+ "canvas": 1000,
+ "baseline": 940,
+ "pad": 50,
+ "places": {
+  "description": {
+   "name": "Description",
+   "section": "project",
+   "file": "places/description.png",
+   "scale": 3.3847,
+   "tx": 598.3,
+   "ty": 862.2,
+   "bbox": {
+    "x": -162,
+    "y": -82,
+    "w": 265.9000244140625,
+    "h": 105
+   },
+   "reach": 74
+  },
+  "biomanufacturing": {
+   "name": "Biomanufacturing",
+   "section": "project",
+   "file": "places/biomanufacturing.png",
+   "scale": 2.439,
+   "tx": 642.7,
+   "ty": 869.3,
+   "bbox": {
+    "x": -243,
+    "y": -141,
+    "w": 369,
+    "h": 170
+   },
+   "reach": 92
+  },
+  "engineering": {
+   "name": "Engineering",
+   "section": "project",
+   "file": "places/engineering.png",
+   "scale": 4.2353,
+   "tx": 678.9,
+   "ty": 842.6,
+   "bbox": {
+    "x": -148.5,
+    "y": -108.98460388183594,
+    "w": 212.5,
+    "h": 131.98460388183594
+   },
+   "reach": 64
+  },
+  "development": {
+   "name": "Development",
+   "section": "project",
+   "file": "places/development.png",
+   "scale": 3.6072,
+   "tx": 683.1,
+   "ty": 846.2,
+   "bbox": {
+    "x": -175.5,
+    "y": -128,
+    "w": 249.5,
+    "h": 154
+   },
+   "reach": 68
+  },
+  "contribution": {
+   "name": "Contribution",
+   "section": "project",
+   "file": "places/contribution.png",
+   "scale": 5.3731,
+   "tx": 702.8,
+   "ty": 848.7,
+   "bbox": {
+    "x": -121.5,
+    "y": -66,
+    "w": 167.5,
+    "h": 83
+   },
+   "reach": 52
+  },
+  "results": {
+   "name": "Results",
+   "section": "project",
+   "file": "places/results.png",
+   "scale": 5.7915,
+   "tx": 706.8,
+   "ty": 772,
+   "bbox": {
+    "x": -113.4000015258789,
+    "y": -100,
+    "w": 155.40000915527344,
+    "h": 129
+   },
+   "reach": 56
+  },
+  "experiments": {
+   "name": "Experiments",
+   "section": "wetlab",
+   "file": "places/experiments.png",
+   "scale": 3.8793,
+   "tx": 678.4,
+   "ty": 850.8,
+   "bbox": {
+    "x": -162,
+    "y": -74,
+    "w": 232,
+    "h": 97.00000762939453
+   },
+   "reach": 64
+  },
+  "parts": {
+   "name": "Parts",
+   "section": "wetlab",
+   "file": "places/parts.png",
+   "scale": 5.1282,
+   "tx": 673.1,
+   "ty": 837.4,
+   "bbox": {
+    "x": -121.5,
+    "y": -84,
+    "w": 175.5,
+    "h": 104
+   },
+   "reach": 56
+  },
+  "plant": {
+   "name": "Plants",
+   "section": "wetlab",
+   "file": "places/plant.png",
+   "scale": 3.005,
+   "tx": 485.9,
+   "ty": 849.8,
+   "bbox": {
+    "x": -145.0500030517578,
+    "y": -96,
+    "w": 299.5,
+    "h": 126
+   },
+   "reach": 116
+  },
+  "measurement": {
+   "name": "Measurement",
+   "section": "wetlab",
+   "file": "places/measurement.png",
+   "scale": 4.6154,
+   "tx": 673.1,
+   "ty": 833.8,
+   "bbox": {
+    "x": -135,
+    "y": -79,
+    "w": 195,
+    "h": 102
+   },
+   "reach": 60
+  },
+  "safety-and-security": {
+   "name": "Safety",
+   "section": "wetlab",
+   "file": "places/safety-and-security.png",
+   "scale": 7.2,
+   "tx": 664.2,
+   "ty": 731.2,
+   "bbox": {
+    "x": -75.5999984741211,
+    "y": -96,
+    "w": 105.5999984741211,
+    "h": 125
+   },
+   "reach": 48
+  },
+  "notebook": {
+   "name": "Notebook",
+   "section": "wetlab",
+   "file": "places/notebook.png",
+   "scale": 5.1873,
+   "tx": 680.3,
+   "ty": 851.8,
+   "bbox": {
+    "x": -121.5,
+    "y": -63.20000076293945,
+    "w": 173.5,
+    "h": 80.20000457763672
+   },
+   "reach": 54
+  },
+  "model": {
+   "name": "Math Model",
+   "section": "drylab",
+   "file": "places/model.png",
+   "scale": 6,
+   "tx": 698,
+   "ty": 748,
+   "bbox": {
+    "x": -108,
+    "y": -104,
+    "w": 150,
+    "h": 136
+   },
+   "reach": 58
+  },
+  "hardware": {
+   "name": "Hardware",
+   "section": "drylab",
+   "file": "places/hardware.png",
+   "scale": 5.0992,
+   "tx": 669.5,
+   "ty": 761.5,
+   "bbox": {
+    "x": -121.5,
+    "y": -120,
+    "w": 176.5,
+    "h": 155
+   },
+   "reach": 70
+  },
+  "software": {
+   "name": "Digital Twin",
+   "section": "drylab",
+   "file": "places/software.png",
+   "scale": 5.8442,
+   "tx": 681.2,
+   "ty": 770.5,
+   "bbox": {
+    "x": -108,
+    "y": -92,
+    "w": 154,
+    "h": 121
+   },
+   "reach": 56
+  },
+  "protein-design": {
+   "name": "Protein Design",
+   "section": "drylab",
+   "file": "places/protein-design.png",
+   "scale": 5.8632,
+   "tx": 596.4,
+   "ty": 734.8,
+   "bbox": {
+    "x": -59.400001525878906,
+    "y": -118.5,
+    "w": 85.9000015258789,
+    "h": 153.5
+   },
+   "reach": 48
+  },
+  "drylab-notebook": {
+   "name": "Dry Lab Notebook",
+   "section": "drylab",
+   "file": "places/drylab-notebook.png",
+   "scale": 5.1873,
+   "tx": 680.3,
+   "ty": 851.8,
+   "bbox": {
+    "x": -121.5,
+    "y": -65,
+    "w": 173.5,
+    "h": 82
+   },
+   "reach": 54
+  },
+  "human-practices": {
+   "name": "Integrated Human Practices",
+   "section": "engagement",
+   "file": "places/human-practices.png",
+   "scale": 4.0881,
+   "tx": 524.2,
+   "ty": 858.2,
+   "bbox": {
+    "x": -116,
+    "y": -136,
+    "w": 220.15000915527344,
+    "h": 156
+   },
+   "reach": 78
+  },
+  "education": {
+   "name": "Education",
+   "section": "engagement",
+   "file": "places/education.png",
+   "scale": 2.8662,
+   "tx": 669.1,
+   "ty": 848.3,
+   "bbox": {
+    "x": -216,
+    "y": -134,
+    "w": 314,
+    "h": 166
+   },
+   "reach": 78
+  },
+  "entrepreneurship": {
+   "name": "Entrepreneurship",
+   "section": "engagement",
+   "file": "places/entrepreneurship.png",
+   "scale": 3.9274,
+   "tx": 633.2,
+   "ty": 814.3,
+   "bbox": {
+    "x": -148.5,
+    "y": -114,
+    "w": 229.16000366210938,
+    "h": 146
+   },
+   "reach": 64
+  },
+  "sustainability": {
+   "name": "Sustainability",
+   "section": "engagement",
+   "file": "places/sustainability.png",
+   "scale": 3.1142,
+   "tx": 500,
+   "ty": 812.3,
+   "bbox": {
+    "x": -106.54804992675781,
+    "y": -248,
+    "w": 213.09609985351562,
+    "h": 289
+   },
+   "reach": 66
+  },
+  "laws-and-regulations": {
+   "name": "Laws and Regulations",
+   "section": "engagement",
+   "file": "places/laws-and-regulations.png",
+   "scale": 3.0534,
+   "tx": 668.3,
+   "ty": 842.3,
+   "bbox": {
+    "x": -202.5,
+    "y": -106,
+    "w": 294.75,
+    "h": 138
+   },
+   "reach": 74
+  },
+  "geospatial-analysis": {
+   "name": "Geospatial Analysis",
+   "section": "engagement",
+   "file": "places/geospatial-analysis.png",
+   "scale": 5.8065,
+   "tx": 652.4,
+   "ty": 754.2,
+   "bbox": {
+    "x": -94.5,
+    "y": -123,
+    "w": 136.5,
+    "h": 155
+   },
+   "reach": 58
+  },
+  "data-physicalization": {
+   "name": "Data Physicalization",
+   "section": "engagement",
+   "file": "places/data-physicalization.png",
+   "scale": 4.3825,
+   "tx": 641.6,
+   "ty": 839.2,
+   "bbox": {
+    "x": -135,
+    "y": -77.5999984741211,
+    "w": 205.36000061035156,
+    "h": 100.5999984741211
+   },
+   "reach": 60
+  },
+  "team": {
+   "name": "Members",
+   "section": "team",
+   "file": "places/team.png",
+   "scale": 4.1442,
+   "tx": 540.8,
+   "ty": 745.3,
+   "bbox": {
+    "x": -118.41999816894531,
+    "y": -53.736000061035156,
+    "w": 217.1699981689453,
+    "h": 100.71099853515625
+   },
+   "reach": 80
+  },
+  "attributions": {
+   "name": "Attribution",
+   "section": "team",
+   "file": "places/attributions.png",
+   "scale": 6.6914,
+   "tx": 682.3,
+   "ty": 806.2,
+   "bbox": {
+    "x": -94.5,
+    "y": -82,
+    "w": 134.5,
+    "h": 102
+   },
+   "reach": 50
+  },
+  "milestones": {
+   "name": "Milestones",
+   "section": "team",
+   "file": "places/milestones.png",
+   "scale": 7.7922,
+   "tx": 500,
+   "ty": 838.7,
+   "bbox": {
+    "x": -28,
+    "y": -102.5,
+    "w": 56,
+    "h": 115.5
+   },
+   "reach": 50
+  }
+ },
+ "sections": [
+  {
+   "id": "project",
+   "name": "Project",
+   "ink": "#a3375f",
+   "line": "#d65a86",
+   "pill": "#fce4ea"
+  },
+  {
+   "id": "wetlab",
+   "name": "Wet Lab",
+   "ink": "#3d6a4b",
+   "line": "#4a7c59",
+   "pill": "#e4eedc"
+  },
+  {
+   "id": "drylab",
+   "name": "Dry Lab",
+   "ink": "#3f5a66",
+   "line": "#6f8f9c",
+   "pill": "#e3eef2"
+  },
+  {
+   "id": "engagement",
+   "name": "Engagement",
+   "ink": "#85502f",
+   "line": "#c08a68",
+   "pill": "#f9ecdd"
+  },
+  {
+   "id": "team",
+   "name": "Team",
+   "ink": "#845c0f",
+   "line": "#d99a1e",
+   "pill": "#fdf1c9"
+  }
+ ],
+ "note": "Each PNG is one place drawn on a 1000 x 1000 transparent canvas, standing on the baseline y=940 and centred at x=500. A hand-drawn replacement must use the same canvas, baseline and footprint; scale/tx/ty map the drawing units back onto the canvas."
+}
