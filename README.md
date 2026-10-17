@@ -1,50 +1,63 @@
-# ReLEAF navigation picture
+# ReLEAF navigation map
 
-A painting at the foot of every ReLEAF wiki subpage, under the title "Explore our project". Each thing in it opens a page. It takes the place of the page's Previous / Next row.
+The map at the foot of every ReLEAF wiki subpage. A reader who finishes a page
+sees where it sits: the page they are on in the middle, the pages it **builds
+on** to the left, the pages it **leads to** on the right, one of them tagged
+*Read next*, and under every linked page one line saying what the connection is.
 
-Review page for the team (EN / 中文): https://timmy97-tw.github.io/releaf-navmap/ . Its "Suggest a change" chat (`assets/chat.js`) walks a student through their changes and builds a structured prompt to send to Timmy; it runs in the browser and sends nothing.
+A second picture shows the **whole wiki**: all 27 pages on one ring, grouped
+into the five menus, with every link drawn. Point at a page and its links and
+neighbours light while the rest dim; the panel beside the ring lists them with
+the reason for each link. Point at a section name to see how that section hangs
+together.
 
-## Two pictures
+Review page: https://timmy97-tw.github.io/releaf-navmap/
 
-**`b`, the field edge (chosen):** seven things, seven pages.
+## Where the choices come from
 
-| In the picture | Page |
+Which pages appear on each page's map is **Jacquelyn's** choice, taken
+unchanged from her valley prototype (`reference/jacquelyn-valley/`, October
+2026; five or six pages per map). Round 2 redrew the picture: it adds the lane
+(builds on / leads to), the one-line reason, the *Read next* tag, and the
+whole-wiki ring. Her valley stays in the repository for reference.
+
+## Files
+
+| Path | What it is |
 |---|---|
-| Crops in the field | Plants |
-| The farmer | Integrated Human Practices |
-| The student in a lab coat | Team Members |
-| The notebook in the student's hand | Results |
-| The bioreactor | Hardware |
-| The screen on the bioreactor | Digital Twin |
-| The warning label on the bioreactor | Safety and Security |
-
-**`w`, the whole wiki:** every page of the five menus (Project, Wet Lab, Dry Lab, Engagement, Team) as one thing in one valley, read left to right: the labs, the road, the team, the farms and the town.
+| `assets/navmap/navmap-data.js` | Sections, pages, icons and the links with their lanes and phrases. The only file a page owner needs to edit. |
+| `assets/navmap/navmap.js` | Draws both maps. No dependencies. |
+| `assets/navmap/navmap.css` | Styles for both. White ground, the wiki's section colours. |
+| `index.html` | The review page: a page picker, both maps in a mock subpage, the design logic, how to install. |
+| `reference/jacquelyn-valley/` | The prototype whose page choices this follows. |
 
 ## Putting it in a wiki page
 
-Copy `navmap/` to `assets/navmap/` in the wiki, then add after a page's last section:
+Copy `assets/navmap/` into the wiki's `assets/`, then add after a page's last
+section, before the footer:
 
 ```html
-<link rel="stylesheet" href="/assets/navmap/navmap.css">
-<section class="navmap" data-variant="b"></section>
-<script src="/assets/navmap/layout.js"></script>        <!-- for b -->
-<script src="/assets/navmap/layout-world.js"></script>  <!-- for w -->
-<script src="/assets/navmap/navmap.js"></script>
+<link rel="stylesheet" href="../assets/navmap/navmap.css">
+<section class="navmap"></section>                    <!-- the page map -->
+<section class="navmap" data-map="all"></section>     <!-- the whole wiki, optional -->
+<script src="../assets/navmap/navmap-data.js"></script>
+<script src="../assets/navmap/navmap.js"></script>
 ```
 
-- `data-variant`: `b` or `w`.
-- `data-root`: the wiki root, default `/`.
-- The page the reader is on is found from the URL and marked "You are here".
-- The page's `.pagenav` (Previous / Next) is removed. Add `data-keep-pagenav` to keep it.
-- Nothing is fetched from outside the site.
+- The page the reader is on is read from the URL (the first folder under the
+  wiki root, worked out from the script's own address), so the same lines work
+  at `/`, `/releaf-wiki/` and `/gems-taiwan/`. Force it with `data-here="slug"`.
+- The page's `.pagenav` (Previous / Next) is removed; add `data-keep-pagenav` to keep it.
+- `data-root` points the links somewhere else than the wiki the script sits in.
+- Nothing is fetched from outside the site. The font is whatever the page uses.
 
-On hover (or the first tap on a phone) the thing is traced in white, a small name tag appears over it, and its line appears in the caption under the picture. The lines live in `navmap.js` (`LIST`) and are drafts for each page's owner to rewrite.
+## Editing the data
 
-## The art
+In `navmap-data.js`, `links[page]` is the list of related pages, in order. Each has:
 
-These are placeholders, to be replaced by hand-drawn art (see the brief on the review page). The ground (sky, ridge, far fields) is the student painting from the homepage's vision section. Everything standing on it is drawn by code in her manner (`build/paint.py`, `build/paint_world.py`, on the wiki's `build/vision_details.py` Painter), AI-assisted. The people are generic, not real people.
+- `to`: the page's slug (iGEM's standard URL; do not rename).
+- `lane`: `in` (this page builds on it, drawn on the left) or `out` (it leads there, drawn on the right).
+- `why`: the one-line reason shown under the page's name. A lowercase fragment; the first letter is capitalised on screen. These are drafts for the page owners to rewrite.
+- `next`: `true` on exactly one `out` link per page, the *Read next* tag.
 
-    python build/paint.py "<folder with the five vision PNGs>" navmap/img
-    python build/paint_world.py "<folder with the five vision PNGs>" navmap/img
-
-Needs numpy, scipy and Pillow.
+Both maps read the same list, so a change here shows in both.

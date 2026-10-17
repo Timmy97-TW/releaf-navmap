@@ -1,0 +1,128 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ReLEAF Valley Navmap (Copy)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="navmap/navmap.css">
+<style>
+  /* Layout: the last screen of a ReLEAF wiki subpage, the valley sitting on the footer.
+     Single light theme on purpose: it shows the wiki, which is light. */
+  :root {
+    --white: #ffffff; --gray-50: #fafafa; --gray-200: #e5e5e5; --gray-500: #6b6b6b; --gray-700: #404040; --black: #171717;
+    --leaf-900: #14402b; --leaf-500: #4f9c6f; --leaf-50: #f4f9f6; --lime: #9bd14b;
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    --max: 1280px; --sp-5: 20px; --sp-6: 24px;
+    color-scheme: light;
+  }
+  body { background: var(--white); color: var(--black); font: 16px/1.6 var(--font); }
+  .wrap { max-width: var(--max); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+  @media (min-width: 640px) { .wrap { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); } }
+
+  .intro { padding-block: 40px 8px; display: grid; gap: 14px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--leaf-500); margin: 0; }
+  .intro h1 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); line-height: 1.15; letter-spacing: -.02em; margin: 0; text-wrap: balance; max-width: 22ch; }
+  .intro p { margin: 0; max-width: 64ch; color: var(--gray-700); }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 6px; }
+  .controls label { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+  .controls select { font: 500 15px var(--font); color: var(--black); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--gray-200); background: var(--white); min-width: 0; max-width: 100%; }
+  .controls select:focus-visible { outline: 2px solid var(--leaf-500); outline-offset: 2px; }
+  .hint { font-size: 14px; color: var(--gray-500); }
+  .nowon { margin: 8px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--leaf-50); color: var(--leaf-900) !important; font-size: 15px; }
+
+  /* a stand-in for the end of the page the reader was on */
+  .pageend { padding-block: 26px 0; display: grid; gap: 10px; }
+  .pageend span { display: block; height: 10px; border-radius: 6px; background: var(--gray-50); border: 1px solid var(--gray-200); }
+  .pageend span:nth-child(2) { width: 82%; } .pageend span:nth-child(3) { width: 64%; }
+
+  .navmap { margin-top: 56px; }
+
+  /* the wiki's footer, so the ground can be seen meeting it */
+  .footer2 { border-top: 1px solid var(--gray-200); background: var(--gray-50); }
+  .footer2 .wrap { padding-block: 34px 40px; display: grid; gap: 22px 24px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .footer2 h3 { margin: 0 0 10px; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--gray-500); }
+  .footer2 ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; color: var(--gray-700); }
+
+  .notes { padding-block: 36px 56px; display: grid; gap: 12px; }
+  .notes h2 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+  .notes ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 68ch; color: var(--gray-700); font-size: 15px; }
+</style>
+
+<header class="wrap intro">
+  <p class="eyebrow">Navigation picture &middot; prototype 16</p>
+  <h1>The whole wiki in one valley</h1>
+  <p>This is how the end of a ReLEAF subpage would look. Every page is a thing you can recognize. Things you can click have a white sticker edge, and a name appears when you point at one. The mascot stands next to the page you are on, and if you rest on something else he moonwalks over to it. Click a thing to open that page on the live wiki.</p>
+  <div class="controls">
+    <label for="here">Pretend you are reading</label>
+    <select id="here"></select>
+    <span class="hint">Swap pages to watch him walk there.</span>
+  </div>
+  <p class="nowon">You are on the <strong id="reading">Description</strong> page. Click any sticker in the picture to go to that page and see its scene.</p>
+  <div class="pageend" aria-hidden="true"><span></span><span></span><span></span></div>
+</header>
+
+<section class="navmap" id="valley" data-local data-manual data-here="description" data-root="https://timmy97-tw.github.io/releaf-wiki/"></section>
+
+<footer class="footer2">
+  <div class="wrap">
+    <div><h3>Project</h3><ul><li>Description</li><li>Biomanufacturing</li><li>Engineering</li><li>Development</li><li>Contribution</li><li>Results</li></ul></div>
+    <div><h3>Wet Lab</h3><ul><li>Experiments</li><li>Parts</li><li>Plants</li><li>Measurement</li><li>Safety</li><li>Notebook</li></ul></div>
+    <div><h3>Dry Lab</h3><ul><li>Math Model</li><li>Hardware</li><li>Digital Twin</li><li>Protein Design</li><li>Dry Lab Notebook</li></ul></div>
+    <div><h3>Engagement</h3><ul><li>Integrated Human Practices</li><li>Education</li><li>Entrepreneurship</li><li>Sustainability</li><li>Laws and Regulations</li><li>Geospatial Analysis</li><li>Data Physicalization</li></ul></div>
+    <div><h3>Team</h3><ul><li>Members</li><li>Attribution</li><li>Milestones</li></ul></div>
+  </div>
+</footer>
+
+<section class="wrap notes">
+  <h2>What is still a placeholder</h2>
+  <ul>
+    <li>This sample is clickable: click a sticker and the picture turns into that page's scene, the way it would when a reader follows the link on the real wiki.</li>
+    <li>Every page has its own small scene with the page itself in (or close to) the middle and 5 to 6 related pages around it, all clickable stickers.</li>
+    <li>Things are grouped by the story along one path: lab things inside a small open lab station, the team and project things, the farm (the farmer always on a crop field, the bioreactor always beside it), and the village.</li>
+    <li>Where the link table had fewer than five links, related pages were added: Results, Experiments, Parts, Plants, Measurement, Safety, Notebook, Math Model, Hardware, Digital Twin, Protein Design, Human Practices, Education, Entrepreneurship, Data Physicalization, Members and Milestones.</li>
+    <li>The art is still the code-drawn placeholder from the navmap repository, repainted for the new layout. Hand-drawn art can replace it object by object, at the same sizes and positions.</li>
+    <li>The mascot is cut out of the homepage's moonwalk animation, so a few white edges show around his hat. A transparent drawing of him would fix that.</li>
+    <li>The name tag uses shorter names than the menu for four pages: Human Practices, Laws &amp; Regulations, Geospatial and Team Members.</li>
+    <li>On a phone the valley keeps a readable size and scrolls sideways, starting where you are.</li>
+  </ul>
+</section>
+
+<script src="navmap/layout-world.js"></script>
+<script src="navmap/layout-pages.js"></script>
+<script src="navmap/navmap.js"></script>
+<script>
+  (function () {
+    var PAGES = [
+      ['Project', [['description', 'Description'], ['biomanufacturing', 'Biomanufacturing'], ['engineering', 'Engineering'], ['development', 'Development'], ['contribution', 'Contribution'], ['results', 'Results']]],
+      ['Wet Lab', [['experiments', 'Experiments'], ['parts', 'Parts'], ['plant', 'Plants'], ['measurement', 'Measurement'], ['safety-and-security', 'Safety'], ['notebook', 'Notebook']]],
+      ['Dry Lab', [['model', 'Math Model'], ['hardware', 'Hardware'], ['software', 'Digital Twin'], ['protein-design', 'Protein Design'], ['drylab-notebook', 'Dry Lab Notebook']]],
+      ['Engagement', [['human-practices', 'Integrated Human Practices'], ['education', 'Education'], ['entrepreneurship', 'Entrepreneurship'], ['sustainability', 'Sustainability'], ['laws-and-regulations', 'Laws and Regulations'], ['geospatial-analysis', 'Geospatial Analysis'], ['data-physicalization', 'Data Physicalization']]],
+      ['Team', [['team', 'Members'], ['attributions', 'Attribution'], ['milestones', 'Milestones']]]
+    ];
+    var sel = document.getElementById('here');
+    PAGES.forEach(function (g) {
+      var og = document.createElement('optgroup'); og.label = g[0];
+      g[1].forEach(function (p) { var o = document.createElement('option'); o.value = p[0]; o.textContent = p[1]; og.appendChild(o); });
+      sel.appendChild(og);
+    });
+    sel.value = 'description';
+    var valley = document.getElementById('valley');
+    var reading = document.getElementById('reading');
+    function go() {
+      valley.setAttribute('data-here', sel.value);
+      if (reading) reading.textContent = sel.options[sel.selectedIndex].textContent;
+      window.NavMap && NavMap.mount(valley);
+    }
+    sel.addEventListener('change', go);
+    // the sample is clickable: a sticker takes you to that page's own scene
+    valley.addEventListener('navmap:go', function (e) {
+      if (!e.detail) return;
+      sel.value = e.detail;
+      go();
+      try { valley.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (err) {}
+    });
+    go();
+  })();
+</script>
+
+</body></html>

@@ -1,0 +1,58 @@
+/* ReLEAF navigation picture, prototype 2. Sits at the foot of a page, right on
+   top of the footer, so the valley's ground meets the footer's edge. */
+
+.navmap {
+  --nm-ink: #1d1d1f; --nm-ink-2: #424245; --nm-ink-3: #6b6b6b; --nm-lime: #9bd14b;
+  max-width: var(--max, 1280px);
+  margin: 72px auto 0;
+  padding: 0 var(--sp-5, 20px);
+  box-sizing: border-box;
+}
+@media (min-width: 640px) { .navmap { padding: 0 var(--sp-6, 24px); } }
+.navmap .nm-title { font-size: clamp(1.4rem, 2.2vw, 1.9rem); letter-spacing: -.015em; margin: 0 0 4px; color: inherit; }
+.navmap .nm-stage { position: relative; }
+.navmap svg { display: block; width: 100%; height: auto; border-radius: 22px 22px 0 0; }
+
+.navmap .nm-spot { cursor: pointer; outline: none; transition: opacity .25s; }
+.navmap .nm-spot.nm-is-here { cursor: default; }
+.navmap .nm-hit { fill: #000; fill-opacity: 0; }
+.navmap .nm-veil { fill: #fbfaf2; fill-opacity: .2; pointer-events: none; }
+.navmap .nm-art { filter: url(#nm-rest); }
+.navmap .nm-spot.nm-focal .nm-art { filter: url(#nm-focal); }
+/* things not linked from this page: part of the painting, faded, not clickable */
+.navmap .nm-off { filter: saturate(.45) opacity(.6); pointer-events: none; }
+.navmap .nm-spot.nm-on .nm-art { filter: url(#nm-hover); }
+.navmap .nm-spot:focus-visible .nm-art { filter: url(#nm-hover); }
+
+/* the name tag over whatever is pointed at */
+.navmap .nm-tag { position: absolute; z-index: 4; transform: translate(-50%, -100%) translateY(4px); white-space: nowrap; pointer-events: none;
+  padding: 4px 11px; border-radius: 999px; background: rgba(29, 29, 31, .84); color: #fff;
+  font-size: 13px; font-weight: 600; letter-spacing: -.005em; line-height: 1.35;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .15s, transform .15s; }
+.navmap .nm-tag.nm-below { transform: translate(-50%, 0) translateY(-4px); }
+.navmap .nm-tag.nm-show { opacity: 1; transform: translate(-50%, -100%); }
+.navmap .nm-tag.nm-below.nm-show { transform: translate(-50%, 0); }
+
+/* the mascot, standing on his feet at the point given */
+.navmap .nm-guy { position: absolute; z-index: 3; height: auto; pointer-events: none;
+  transform: translate(-50%, -94%); transition-property: left, top, width; transition-timing-function: linear; }
+.navmap .nm-guy.nm-turn { transform: translate(-50%, -94%) scaleX(-1); }
+
+/* the line between the title and the picture */
+.navmap .nm-caption { margin: 0; padding: 0 2px 16px; min-height: 1.6em; font-size: 15px; line-height: 1.55; color: var(--nm-ink-2); }
+.navmap .nm-caption strong { color: var(--nm-ink); margin-right: .5em; }
+.navmap .nm-caption .nm-rest { color: var(--nm-ink-3); }
+
+/* on a phone the valley keeps a readable size and scrolls sideways */
+@media (max-width: 760px) {
+  .navmap .nm-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 14px 14px 0 0;
+    margin: 0 calc(-1 * var(--sp-5, 20px)); }
+  .navmap .nm-scroll::-webkit-scrollbar { display: none; }
+  .navmap .nm-stage { width: 880px; }
+  .navmap svg { border-radius: 0; }
+  .navmap .nm-caption { font-size: 14px; min-height: 3.2em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navmap * { transition: none !important; }
+}
