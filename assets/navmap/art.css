@@ -28,8 +28,10 @@
 /* the name tags */
 .nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 .nma .nma-tag.nma-show { opacity: 1; }
-.nma .nma-tag__bg { fill: rgba(23, 23, 23, .86); }
-.nma .nma-tag__t { font-size: 22px; font-weight: 600; fill: #fff; text-anchor: middle; dominant-baseline: middle; letter-spacing: -.01em; }
+.nma .nma-tag__bg { fill: rgba(23, 23, 23, .88); }
+.nma .nma-tag__pin { stroke: rgba(23, 23, 23, .6); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.nma-page .nma-tag__pin { stroke: var(--s-ink, #171717); opacity: .5; }
+.nma .nma-tag__t { font-size: 23px; font-weight: 600; fill: #fff; text-anchor: middle; dominant-baseline: middle; letter-spacing: -.01em; }
 .nma-page .nma-tag__bg { fill: #fff; stroke: var(--s-ink, #171717); stroke-width: 1.5; }
 .nma-page .nma-tag__t { fill: var(--s-ink, #171717); font-size: 24px; }
 
@@ -38,6 +40,9 @@
 .nma .nma-sign { font-size: 14px; font-weight: 600; fill: #2b2b2b; }
 .nma .nma-sign--big { font-size: 26px; font-weight: 700; fill: #f6f3e8; letter-spacing: .04em; }
 .nma .nma-sign--tiny { font-size: 12px; fill: #6f5430; }
+.nma .nma-sign--step { font-size: 12px; font-weight: 700; fill: #6f5430; }
+.nma .nma-sign--white { font-size: 11px; font-weight: 700; fill: #f7f3e6; letter-spacing: .1em; }
+.nma .nma-sign--roof { font-size: 22px; font-weight: 700; fill: #f7f3e6; letter-spacing: .18em; opacity: .9; }
 .nma .nma-lane { font-size: 30px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; fill: #ffffff; opacity: .92; }
 .nma .nma-lane__arrow { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; opacity: .9; }
 
