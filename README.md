@@ -14,7 +14,19 @@ together.
 Review page: https://timmy97-tw.github.io/releaf-navmap/ (the diagram) and
 https://timmy97-tw.github.io/releaf-navmap/art.html (the painted version).
 
-## Two versions, same logic
+## The decision (17 Oct 2026)
+
+The **Description page** ends on the whole valley (`art.html`, `data-art="all"`).
+**Every other subpage** ends on its own scene (`scenes.html`, `data-art="scene"`,
+`assets/navmap/scene.js`): the page's thing in the middle, what comes before it
+to the left, what comes after to the right, a peer at the same size beside it
+where one mirrors the other, and a route arcing back where the work learns from
+itself. The scene is set where the page lives (lab pavilion, studio, yard, plaza,
+village green, field). Which pages appear is Jacquelyn's choice; the order, peers
+and loops are `FLOW` in `scene.js`, one line per page. The diagram version stays
+as reference.
+
+## Three versions, same data
 
 **Diagram** (`index.html`, `navmap.js`): cards and wires, the wiki's section
 colours, the ring for the whole wiki.
@@ -46,7 +58,9 @@ whole-wiki ring. Her valley stays in the repository for reference.
 | `assets/navmap/navmap.js` | Draws both maps. No dependencies. |
 | `assets/navmap/navmap.css` | Styles for both. White ground, the wiki's section colours. |
 | `assets/navmap/art.js`, `art.css` | The painted version: the 27 place drawings, the valley, the page road, the dusk-and-light behaviour. `data-art="page"` or `data-art="all"` on the section. |
-| `art.html` | The review page for the painted version. |
+| `art.html` | The review page for the painted version (the whole valley, used on Description). |
+| `assets/navmap/scene.js` | The page scenes: `FLOW` (before / peer / after / loop per page), the zone settings, the composition. Needs art.js. |
+| `scenes.html` | The review page for the scenes, with a page picker. |
 | `index.html` | The review page: a page picker, both maps in a mock subpage, the design logic, how to install. |
 | `reference/jacquelyn-valley/` | The prototype whose page choices this follows. |
 

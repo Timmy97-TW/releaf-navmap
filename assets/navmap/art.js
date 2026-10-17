@@ -840,7 +840,14 @@
   }
 
   function mount(root) { if (root.getAttribute('data-art') === 'all') mountAll(root); else mountPage(root); }
-  window.NavMapArt = { mount: mount, places: PLACE, positions: POS };
+  window.NavMapArt = { mount: mount, places: PLACE, positions: POS,
+    // the drawing library, for the page scenes (scene.js)
+    lib: { C: C, PLACE: PLACE, SEC: SEC, PAGE: PAGE, ORDER: ORDER, ZONES: ZONES, W: W, H: H,
+      poly: poly, path: path, ell: ell, circ: circ, rect: rect, line: line, stroke: stroke, at: at, pool: pool, cast: cast, prism: prism, gable: gable, jitter: jitter, ridge: ridge, r1: r1, esc: esc, mul: mul,
+      tree: tree, pine: pine, bush: bush, person: person, house: house, hay: hay, fence: fence, pot: pot, flowers: flowers, tuft: tuft,
+      roadPath: roadPath, slab: slab, pavilion: pavilion, mountains: mountains, treeline: treeline, farFields: farFields, defs: defs,
+      beacon: beacon, lighting: lighting, keyboard: keyboard, layoutTags: layoutTags, tagFor: tagFor, placeGroup: placeGroup,
+      linksOf: linksOf, neighbours: neighbours, common: common, head: head, h: h, note: note, setSeed: function (v) { seed = v; } } };
   function init() {
     var all = document.querySelectorAll('section.navmap[data-art]');
     for (var i = 0; i < all.length; i++) if (!all[i].hasAttribute('data-manual')) mount(all[i]);
