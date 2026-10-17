@@ -142,16 +142,16 @@
    "name": "Measurement",
    "section": "wetlab",
    "file": "places/measurement.png",
-   "scale": 4.6154,
-   "tx": 673.1,
-   "ty": 833.8,
+   "scale": 3.3708,
+   "tx": 687.1,
+   "ty": 852.4,
    "bbox": {
-    "x": -135,
-    "y": -79,
-    "w": 195,
-    "h": 102
+    "x": -189,
+    "y": -96,
+    "w": 267,
+    "h": 122.00000762939453
    },
-   "reach": 60
+   "reach": 74
   },
   "safety-and-security": {
    "name": "Safety",
@@ -202,16 +202,16 @@
    "name": "Hardware",
    "section": "drylab",
    "file": "places/hardware.png",
-   "scale": 5.0992,
-   "tx": 669.5,
-   "ty": 761.5,
+   "scale": 2.7108,
+   "tx": 635.5,
+   "ty": 837,
    "bbox": {
-    "x": -121.5,
+    "x": -216,
     "y": -120,
-    "w": 176.5,
-    "h": 155
+    "w": 332,
+    "h": 158.00001525878906
    },
-   "reach": 70
+   "reach": 92
   },
   "software": {
    "name": "Digital Twin",
@@ -262,16 +262,16 @@
    "name": "Integrated Human Practices",
    "section": "engagement",
    "file": "places/human-practices.png",
-   "scale": 4.0881,
-   "tx": 524.2,
-   "ty": 858.2,
+   "scale": 3.1579,
+   "tx": 479.5,
+   "ty": 857.9,
    "bbox": {
-    "x": -116,
-    "y": -136,
-    "w": 220.15000915527344,
-    "h": 156
+    "x": -136,
+    "y": -156,
+    "w": 285,
+    "h": 182
    },
-   "reach": 78
+   "reach": 92
   },
   "education": {
    "name": "Education",
