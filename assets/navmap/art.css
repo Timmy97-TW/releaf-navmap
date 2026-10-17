@@ -17,20 +17,19 @@
 .nma .nma-art { transition: filter .5s cubic-bezier(.2,.7,.2,1); }
 .nma .nma-litlayer .nma-art { filter: drop-shadow(0 0 10px var(--glow, #8ddc5a)) drop-shadow(0 0 34px color-mix(in srgb, var(--glow, #8ddc5a) 55%, transparent)); }
 .nma a.nma-active .nma-art { filter: drop-shadow(0 0 12px var(--glow, #8ddc5a)) drop-shadow(0 0 44px color-mix(in srgb, var(--glow, #8ddc5a) 70%, transparent)); }
-.nma.nma-looping .nma-litlayer .nma-art { filter: drop-shadow(0 0 12px #ffd36b) drop-shadow(0 0 44px rgba(220, 171, 59, .7)); }
-.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--glow, #8ddc5a) 55%, transparent)); }
+.nma.nma-looping .nma-litlayer a.nma-active .nma-art { animation: nma-breathe-glow 1.8s ease-in-out infinite; }
+@keyframes nma-breathe-glow { 0%, 100% { filter: drop-shadow(0 0 8px var(--glow, #8ddc5a)) drop-shadow(0 0 24px color-mix(in srgb, var(--glow, #8ddc5a) 45%, transparent)); } 50% { filter: drop-shadow(0 0 16px var(--glow, #8ddc5a)) drop-shadow(0 0 60px color-mix(in srgb, var(--glow, #8ddc5a) 85%, transparent)); } }
+.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 12px var(--glow, #8ddc5a)) drop-shadow(0 0 40px color-mix(in srgb, var(--glow, #8ddc5a) 60%, transparent)); }
 
 /* the lit routes between a place and its neighbours */
 
-/* the name tags */
-.nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .35s cubic-bezier(.2,.7,.2,1); }
+/* the name tags: a frosted white callout with a notch, the page's colour as a dot */
+.nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .35s cubic-bezier(.2,.7,.2,1); filter: drop-shadow(0 3px 10px rgba(20, 30, 20, .18)); }
 .nma .nma-tag.nma-show { opacity: 1; }
-.nma .nma-tag__bg { fill: rgba(23, 23, 23, .88); }
-.nma .nma-tag__pin { stroke: rgba(23, 23, 23, .6); stroke-width: 1.5; stroke-dasharray: 3 3; }
-.nma-page .nma-tag__pin { stroke: var(--s-ink, #171717); opacity: .5; }
-.nma .nma-tag__t { font-size: 23px; font-weight: 600; fill: #fff; text-anchor: middle; dominant-baseline: middle; letter-spacing: -.01em; }
-.nma-page .nma-tag__bg { fill: #fff; stroke: var(--s-ink, #171717); stroke-width: 1.5; }
-.nma-page .nma-tag__t { fill: var(--s-ink, #171717); font-size: 24px; }
+.nma .nma-tag__bg { fill: rgba(255, 255, 255, .94); stroke: rgba(23, 23, 23, .06); stroke-width: 1; }
+.nma .nma-tag__notch { fill: rgba(255, 255, 255, .94); }
+.nma .nma-tag__dot { fill: var(--s-ink, #171717); }
+.nma .nma-tag__t { font-size: 22px; font-weight: 600; fill: #1d1d1f; text-anchor: middle; dominant-baseline: middle; letter-spacing: -.012em; }
 
 /* text painted into the picture */
 
@@ -73,12 +72,11 @@
 .nma .nma-svg a:focus-visible .nma-hit { stroke: #fff; stroke-width: 3; stroke-dasharray: 8 8; }
 /* the "you are here" beacon */
 .nma .nma-beacon { pointer-events: none; }
-.nma .nma-beacon__ring { fill: none; stroke: #8ddc5a; stroke-width: 3; opacity: .7; transform-origin: 0 0; transform-box: fill-box; animation: nma-breathe 3.2s ease-in-out infinite; }
+.nma .nma-beacon__ring { fill: none; stroke: var(--glow, #8ddc5a); stroke-width: 3; opacity: .7; transform-origin: 0 0; transform-box: fill-box; animation: nma-breathe 3.2s ease-in-out infinite; }
 .nma .nma-beacon__pin { animation: nma-bob 3.2s ease-in-out infinite; }
 @keyframes nma-breathe { 0%, 100% { transform: scale(.85); opacity: .35; } 50% { transform: scale(1.1); opacity: .8; } }
 @keyframes nma-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 /* the disclosure under each picture */
-.nma .nma-note { margin: 14px 2px 0; font-size: 12.5px; color: #8a8a8a; }
 @media (prefers-reduced-motion: reduce) { .nma .nma-beacon__ring, .nma .nma-beacon__pin { animation: none; } }
 
 /* the page scenes */

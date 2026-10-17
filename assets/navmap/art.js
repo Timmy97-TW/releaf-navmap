@@ -230,12 +230,20 @@
     f += rect(-2, -84, 3, 46, C.woodShade) + rect(-30, -70, 56, 4, C.woodShade) + poly([[-6, -80], [8, -80], [12, -60], [-10, -60]], C.shirtR) + circ(1, -86, 6, C.hat) + path('M-10,-86 L1,-96 L12,-86 Z', C.hat);
     return f + person(-100, 6, .95, C.shirtB, true) + person(104, -4, .9, C.shirtR, true, true) + pine(-134, -40, .85) + tree(140, -34, .85, 1) + hay(-126, 6, .9);
   } };
-  PLACE.measurement = { r: 60, draw: function () {
-    return cast(100, 70, .18) + prism(-50, -22, 100, 8, 10, C.wallShade, C.wallDeep, C.wall) + rect(-46, -22, 7, 22, C.metalShade) + rect(39, -22, 7, 22, C.metalShade) +
-      prism(-42, -30, 44, 36, 8, C.metal, C.metalShade, C.metalLit) + rect(-38, -62, 36, 22, C.slate, 2) + stroke('M-32,-44 a12,12 0 0 1 24,0', 2.5, C.signal) + line([[-20, -44], [-12, -54]], 2, C.red) +
-      circ(-28, -34, 2.5, C.red) + circ(-20, -34, 2.5, C.leaf) + circ(-12, -34, 2.5, C.gold) + rect(-8, -36, 6, 4, C.metalLit, 1) +
-      rect(12, -52, 10, 22, C.glass, 1) + rect(12, -40, 10, 10, C.blue, 1) + rect(20, -51, 2, 20, C.glassLit, 1, ' opacity=".7"') + prism(26, -30, 16, 28, 4, C.wall, C.wallShade) + line([[29, -54], [29, -36]], 1, C.ink2) + line([[33, -54], [33, -36]], 1, C.ink2) + line([[37, -54], [37, -36]], 1, C.ink2) +
-      line([[20, -68], [20, -60]], 3, C.gold) + ell(20, -72, 7, 4, C.gold, ' opacity=".6"') + ell(20, -72, 11, 7, C.gold, ' opacity=".2"') + rect(-30, -26, 14, 3, C.paper, 1);
+  PLACE.measurement = { r: 74, draw: function () {
+    // the bench: photometer with its dial, the LED on an arm throwing a cone of light through the cuvette, a rack of cuvettes, the calibration card
+    return cast(140, 80, .18) + prism(-66, -22, 132, 9, 12, C.wallShade, C.wallDeep, C.wall) + rect(-62, -22, 8, 22, C.metalShade) + rect(-62, -22, 3, 22, C.metal) + rect(54, -22, 8, 22, C.metalShade) + rect(54, -22, 3, 22, C.metal) + rect(-60, -16, 120, 3, C.metalShade) +
+      // the photometer
+      prism(-58, -31, 48, 40, 9, C.metal, C.metalShade, C.metalLit) + rect(-54, -66, 40, 24, C.slate, 3) + stroke('M-47,-47 a13,13 0 0 1 26,0', 2.5, C.signal) + line([[-34, -47], [-27, -58]], 2, C.red) + circ(-34, -47, 2, C.white) +
+      circ(-46, -36, 2.6, C.red) + circ(-38, -36, 2.6, C.leaf) + circ(-30, -36, 2.6, C.gold) + rect(-22, -39, 8, 5, C.metalLit, 1) +
+      // the LED on its arm, and the cone of light through the cuvette
+      rect(26, -92, 4, 60, C.metalShade) + rect(26, -92, 1.5, 60, C.metalLit) + line([[28, -90], [4, -90]], 4, C.metalShade) + rect(-4, -96, 12, 9, C.metal, 2) + rect(-2, -88, 8, 3, C.gold, 1) +
+      path('M-2,-85 L-14,-33 L18,-33 Z', C.gold, ' opacity=".22"') + path('M-1,-85 L-8,-33 L10,-33 Z', C.cream, ' opacity=".28"') +
+      rect(-5, -58, 12, 26, C.glass, 1.5) + rect(-5, -44, 12, 12, C.blue, 1) + rect(4, -57, 2.5, 24, C.glassLit, 1, ' opacity=".7"') + prism(-9, -31, 20, 4, 3, C.metal, C.metalShade) +
+      // the rack of cuvettes and the calibration card
+      prism(14, -30, 34, 14, 5, C.wall, C.wallShade, C.cream) + rect(18, -50, 6, 20, C.glass, 1) + rect(18, -40, 6, 10, C.liquid, 1) + rect(27, -50, 6, 20, C.glass, 1) + rect(27, -42, 6, 12, C.gold, 1) + rect(36, -50, 6, 20, C.glass, 1) + rect(36, -38, 6, 8, C.blue, 1) +
+      rect(52, -56, 26, 30, C.paper, 2) + stroke('M56,-34 L62,-40 L68,-44 L74,-50', 2, C.greenDeep) + circ(62, -40, 1.8, C.red) + circ(68, -44, 1.8, C.red) + circ(74, -50, 1.8, C.red) + line([[56, -34], [76, -34]], 1, C.ink2) + line([[56, -34], [56, -52]], 1, C.ink2) +
+      rect(-30, -27, 14, 3, C.paper, 1) + pot(-78, 2, .8);
   } };
   PLACE['safety-and-security'] = { r: 48, draw: function () {
     return cast(56, 90, .16) + rect(-3.5, -72, 7, 72, C.woodShade) + rect(-3.5, -72, 3, 72, C.woodLit) +
@@ -258,14 +266,26 @@
       stroke('M-34,-72 C-18,-72 -14,-84 0,-78 C14,-72 20,-60 34,-64', 2.5, C.gold) + circ(-14, -86, 2.2, C.red) + circ(14, -86, 2.2, C.red) + circ(0, -94, 2.6, C.red) +
       pot(-40, 2, .8);
   } };
-  PLACE.hardware = { r: 70, draw: function () {
-    return cast(90, 110, .2) + prism(-34, 0, 68, 92, 12, C.greenDeep, '#2b5a2e', C.green) + rect(-30, -88, 60, 84, C.green, 4) + rect(-30, -88, 60, 3, C.leaf, 1, ' opacity=".3"') +
+  PLACE.hardware = { r: 92, draw: function () {
+    // the three instruments: the bioreactor in its green cabinet, the photometer on a side table, the LED rig over a tray of seedlings
+    var f = cast(160, 120, .2);
+    // the side table with the photometer
+    f += prism(-108, -24, 52, 7, 8, C.wood, C.woodShade, C.woodLit) + rect(-104, -24, 6, 24, C.woodShade) + rect(-62, -24, 6, 24, C.woodShade) +
+      prism(-100, -31, 36, 30, 7, C.metal, C.metalShade, C.metalLit) + rect(-97, -58, 30, 20, C.slate, 2) + stroke('M-92,-43 a10,10 0 0 1 20,0', 2.2, C.signal) + line([[-82, -43], [-77, -52]], 1.8, C.red) + circ(-91, -34, 2.2, C.red) + circ(-84, -34, 2.2, C.leaf) + circ(-77, -34, 2.2, C.gold);
+    // the reactor
+    f += prism(-34, 0, 68, 92, 12, C.greenDeep, '#2b5a2e', C.green) + rect(-30, -88, 60, 84, C.green, 4) + rect(-30, -88, 60, 3, C.leaf, 1, ' opacity=".3"') +
       rect(-22, -80, 44, 58, C.glassShade, 5) + rect(-21, -79, 42, 56, C.glass, 5) + rect(-21, -50, 42, 27, C.liquid, 3) + rect(-21, -36, 42, 13, C.liquidDeep, 2, ' opacity=".5"') + rect(12, -78, 6, 54, C.glassLit, 2, ' opacity=".7"') +
       circ(-8, -36, 3, C.white, ' opacity=".7"') + circ(6, -44, 2.5, C.white, ' opacity=".6"') + circ(1, -30, 2, C.white, ' opacity=".7"') + circ(-12, -46, 1.6, C.white, ' opacity=".6"') +
       rect(-26, -98, 52, 10, C.metal, 3) + rect(-26, -98, 52, 3, C.metalLit, 1) + rect(-7, -106, 14, 8, C.metalShade, 2) + line([[0, -80], [0, -36]], 3, C.metalShade) + rect(-9, -38, 18, 4, C.metalShade, 1) + rect(-9, -56, 18, 4, C.metalShade, 1) +
       rect(-12, -18, 24, 10, C.slate, 2) + circ(-6, -13, 2, C.signal) + circ(0, -13, 2, C.gold) + circ(6, -13, 2, C.red) + stroke('M-24,-60 l-6,0 l0,20 l6,0', 3, C.metalShade) +
       line([[30, -70], [50, -70], [50, -20]], 3.5, C.metalShade) + line([[31, -69], [49, -69]], 1, C.metalLit) + rect(45, -22, 10, 16, C.metal, 1) + rect(45, -22, 10, 3, C.metalLit) +
       rect(-30, -120, 26, 18, C.gold, 2) + rect(-30, -120, 26, 2, C.cream, 1, ' opacity=".6"') + circ(-17, -111, 5.5, 'none', ' stroke="' + C.ink + '" stroke-width="2"') + circ(-17, -111, 1.5, C.ink);
+    // the LED rig over a tray of seedlings, its light falling on them
+    f += rect(104, -96, 4, 92, C.metalShade) + rect(104, -96, 1.5, 92, C.metalLit) + line([[104, -94], [66, -94]], 4, C.metalShade) + rect(62, -100, 44, 8, C.metal, 2) + rect(64, -92, 40, 3, C.gold, 1) +
+      path('M64,-89 L52,-26 L116,-26 Z', C.gold, ' opacity=".18"') + path('M66,-89 L60,-26 L108,-26 Z', C.cream, ' opacity=".2"') +
+      prism(58, -22, 50, 8, 8, C.wood, C.woodShade, C.woodLit) + rect(62, -22, 6, 22, C.woodShade) + rect(100, -22, 6, 22, C.woodShade) + prism(60, -30, 46, 7, 6, C.soil2, C.soil, C.soil) ;
+    [66, 76, 86, 96].forEach(function (x) { f += line([[x, -30], [x, -38]], 1.6, C.greenDeep) + path('M' + x + ',-35 c-5,-1 -8,-5 -7,-8 c4,1 6,4 7,8 z', C.leaf) + path('M' + x + ',-35 c5,-1 8,-5 7,-8 c-4,1 -6,4 -7,8 z', C.leafLit); });
+    return f + pot(-122, 2, .7) + rect(-30, -27, 0, 0, C.paper);
   } };
   PLACE.software = { r: 56, draw: function () {
     return cast(80, 90, .14) + rect(-16, -22, 32, 7, C.metalShade, 2) + rect(-16, -22, 32, 2, C.metalLit, 1) + rect(-3.5, -42, 7, 20, C.metalShade) +
@@ -288,11 +308,23 @@
       rect(-36, -26, 64, 5, C.metal, 1) + rect(-36, -26, 64, 1.5, C.metalLit) + rect(-30, -24, 46, 1, C.ink2, ' opacity=".5"') +
       circ(32, -56, 9, C.paper) + circ(32, -56, 2, C.ink2) + stroke('M32,-56 l0,-5 M32,-56 l4,2', 1.5, C.ink) + rect(-44, -31, 8, 9, C.red, 1) + rect(-44, -35, 8, 3, C.roofShade, 1) + pot(42, -24, .6);
   } };
-  PLACE['human-practices'] = { r: 78, draw: function () {
-    return pool(-8, 6, 74, 14, .14) + ell(0, -2, 46, 17, C.woodShade) + ell(-1, -6, 43, 14, C.woodLit) + ell(-1, -6, 43, 14, C.wood, ' opacity=".35"') +
-      line([[-72, -2], [-72, -112]], 5, C.woodShade) + line([[-72, -2], [-72, -112]], 2, C.woodLit) + path('M-116,-108 q44,-38 88,0 z', C.red) + path('M-116,-108 q44,-12 88,0 z', C.roofShade) + path('M-72,-136 q30,8 44,28 l-44,0 z', C.roofLit) +
-      person(-32, 14, .9, C.shirtB, true) + person(32, 14, .9, C.shirtW, false, true) + person(-6, -22, .82, C.shirtG) + person(26, -20, .78, C.shirtR, false, true) +
-      circ(0, -8, 5.5, C.gold) + ell(-16, -9, 7, 3.5, C.paper) + ell(14, -4, 6, 3, C.paper) + rect(-4, -14, 8, 2, C.paperShade) + tree(88, -8, .95) + bush(-100, 10, .7);
+  PLACE['human-practices'] = { r: 92, draw: function () {
+    // the round table under the parasol: a farmer, a student, an official and a teacher, the map and the notes on the table, chairs
+    var chair = function (x, y, flip) { return at(x, y, 1, rect(-7, -14, 14, 3, C.woodShade) + rect(-6, -11, 2, 11, C.woodShade) + rect(4, -11, 2, 11, C.woodShade) + rect(flip ? 4 : -7, -30, 3, 17, C.wood)); };
+    return pool(-10, 8, 92, 18, .14) + ell(0, -2, 56, 20, C.woodShade) + ell(-1, -7, 52, 17, C.woodLit) + ell(-1, -7, 52, 17, C.wood, ' opacity=".3"') + ell(-1, -9, 44, 13, C.woodLit, ' opacity=".5"') +
+      // the parasol
+      line([[-80, -2], [-80, -124]], 6, C.woodShade) + line([[-80, -2], [-80, -124]], 2.5, C.woodLit) +
+      path('M-134,-118 q54,-46 108,0 z', C.red) + path('M-134,-118 q54,-14 108,0 z', C.roofShade) + path('M-80,-150 q36,10 54,32 l-54,0 z', C.roofLit) + path('M-80,-150 q-36,10 -54,32 l54,0 z', C.red) + circ(-80, -152, 4, C.roofShade) +
+      // what is on the table: the map, two sheets, a cup, a seed tray
+      rect(-30, -14, 30, 18, C.lime2, 2, ' transform="skewX(-14)"') + path('M-28,-6 c8,-4 14,-10 24,-6', 'none', ' stroke="' + C.river + '" stroke-width="2"') + circ(-14, -8, 2.2, C.red) +
+      rect(6, -12, 16, 11, C.paper, 1, ' transform="skewX(-14)"') + line([[8, -9], [18, -9]], 1, C.ink2, ' opacity=".5"') + line([[8, -6], [16, -6]], 1, C.ink2, ' opacity=".4"') +
+      circ(28, -8, 4, C.white) + circ(28, -8, 2.2, C.roofShade) + rect(-6, -1, 18, 6, C.soil2, 1) + line([[-3, -1], [-3, -6]], 1.4, C.leaf) + line([[2, -1], [2, -7]], 1.4, C.leaf) + line([[7, -1], [7, -6]], 1.4, C.leaf) +
+      // the people and their chairs
+      chair(-44, 22) + chair(44, 22, true) +
+      person(-40, 18, .95, C.shirtB, true) + person(40, 18, .95, C.shirtW, false, true) + person(-10, -24, .85, C.shirtG) + person(24, -26, .82, C.pants2, false, true, C.ink2) + person(60, -8, .8, C.shirtY, false, true) +
+      // a notice board at the back with the farmers' map, and a tree
+      rect(96, -74, 4, 74, C.woodShade) + rect(96, -74, 1.5, 74, C.woodLit) + rect(74, -112, 48, 40, C.woodShade, 3) + rect(77, -109, 42, 34, C.paper, 2) + path('M80,-92 c8,-6 14,-14 22,-10 c6,4 10,6 16,2 v22 h-38 z', C.lime2) + circ(94, -96, 2.5, C.red) + circ(104, -88, 2.5, C.red) + circ(86, -84, 2.5, C.red) +
+      tree(132, -4, 1.0) + bush(-124, 10, .8);
   } };
   PLACE.education = { r: 78, draw: function () {
     var f = cast(160, 100, .2) + prism(-72, 0, 144, 54, 18, C.wall, C.wallShade, C.wallDeep) + rect(-72, -54, 144, 5, C.wallDeep) + rect(-72, -8, 144, 8, C.wallShade) +
@@ -484,8 +516,7 @@
   function placeGroup(slug, x, y, k, cls) {
     var p = PLACE[slug]; if (!p) return '';
     seed = 7 + slug.length;
-    var sc = SEC[PAGE[slug].section];
-    return '<g class="nma-place ' + (cls || '') + '" data-page="' + slug + '" style="--glow:' + sc.line + ';--glow-ink:' + sc.ink + '" transform="translate(' + x + ',' + y + ') scale(' + k + ')">' +
+    return '<g class="nma-place ' + (cls || '') + '" data-page="' + slug + '" transform="translate(' + x + ',' + y + ') scale(' + k + ')">' +
       '<ellipse class="nma-hit" cx="0" cy="-' + (p.r * .5) + '" rx="' + (p.r + 8) + '" ry="' + (p.r * .75 + 8) + '"/>' +
       '<g class="nma-art">' + p.draw() + '</g></g>';
   }
@@ -517,17 +548,17 @@
   }
   function tagFor(slug, here) {
     var p = PAGE[slug], s = SEC[p.section];
-    return '<g class="nma-tag" data-for="' + slug + '" style="--s-ink:' + s.ink + '"><line class="nma-tag__pin"/><rect class="nma-tag__bg" rx="10"/><text class="nma-tag__t">' + esc(p.name) + (slug === here ? ' · you are here' : '') + '</text></g>';
+    return '<g class="nma-tag" data-for="' + slug + '" style="--s-ink:' + s.ink + '"><path class="nma-tag__notch"/><rect class="nma-tag__bg" rx="14"/><circle class="nma-tag__dot" r="4"/><text class="nma-tag__t">' + esc(p.name) + '</text></g>';
   }
   // place every tag above its place, then push any that overlap upwards until none do
   function layoutTags(svg, posOf, slugs) {
     var boxes = [];
     slugs.forEach(function (slug) {
       var t = svg.querySelector('.nma-tag[data-for="' + slug + '"]'); if (!t) return;
-      var p = posOf(slug), txt = t.querySelector('text'), bg = t.querySelector('rect'), pin = t.querySelector('line');
-      txt.setAttribute('x', p[0]); txt.setAttribute('y', p[1]);
+      var p = posOf(slug), txt = t.querySelector('text'), bg = t.querySelector('rect'), pin = t.querySelector('path'), dot = t.querySelector('circle');
+      txt.setAttribute('x', p[0] + 7); txt.setAttribute('y', p[1]);
       var bb = txt.getBBox();
-      boxes.push({ x: bb.x - 12, y: bb.y - 6, w: bb.width + 24, h: bb.height + 12, ax: p[0], ay: p[2], txt: txt, bg: bg, pin: pin });
+      boxes.push({ x: bb.x - 28, y: bb.y - 8, w: bb.width + 42, h: bb.height + 16, ax: p[0], ay: p[2], txt: txt, bg: bg, pin: pin, dot: dot });
     });
     boxes.sort(function (a, b) { return a.y - b.y; });
     for (var pass = 0; pass < 14; pass++) {
@@ -543,7 +574,8 @@
     boxes.forEach(function (b) {
       b.txt.setAttribute('y', b.y + b.h / 2 + 1);
       b.bg.setAttribute('x', b.x); b.bg.setAttribute('y', b.y); b.bg.setAttribute('width', b.w); b.bg.setAttribute('height', b.h);
-      b.pin.setAttribute('x1', b.ax); b.pin.setAttribute('x2', b.ax); b.pin.setAttribute('y1', b.y + b.h); b.pin.setAttribute('y2', b.ay);
+      b.dot.setAttribute('cx', b.x + 16); b.dot.setAttribute('cy', b.y + b.h / 2);
+      b.pin.setAttribute('d', 'M' + (b.ax - 8) + ',' + (b.y + b.h - 1) + ' L' + b.ax + ',' + (b.y + b.h + 8) + ' L' + (b.ax + 8) + ',' + (b.y + b.h - 1) + ' Z');
     });
   }
 
@@ -590,7 +622,7 @@
     root.classList.add('navmap', 'nma', 'nma-all');
     root.innerHTML = '';
     var hereSec = PAGE[here] ? SEC[PAGE[here].section] : null;
-    if (hereSec) root.style.setProperty('--s-ink', hereSec.ink);
+    if (hereSec) { root.style.setProperty('--s-ink', hereSec.ink); root.style.setProperty('--glow', hereSec.line); }
     head(root, 'Every page', 'The whole valley', 'Read it left to right: the village, the lab, the studio, the yard, the field, the town.');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
@@ -626,14 +658,13 @@
     var legend = h('ul', 'nma-legend'); root.appendChild(legend);
     ZONES.forEach(function (z) { var li = h('li', null, z[1]); li.style.setProperty('--s-line', SEC[z[0]].line); li.style.setProperty('--s-ink', SEC[z[0]].ink); legend.appendChild(li); });
     var cap = h('div', 'nma-cap'); root.appendChild(cap);
-    note(root);
     function fillCap(slug) {
       cap.innerHTML = '';
       if (!PAGE[slug]) return;
       var p = PAGE[slug], sec = SEC[p.section];
       cap.style.setProperty('--s-ink', sec.ink); cap.style.setProperty('--s-pill', sec.pill);
       var hd = h('div', 'nma-cap__head');
-      hd.appendChild(h('span', 'nma-cap__eyebrow', (slug === here ? 'You are here · ' : '') + sec.name));
+      hd.appendChild(h('span', 'nma-cap__eyebrow', sec.name));
       var nm = h('a', 'nma-cap__name', p.name); nm.href = c.href(slug); if (c.local) nm.addEventListener('click', function (e) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); }); hd.appendChild(nm);
       hd.appendChild(h('span', 'nma-cap__line', p.caption));
       cap.appendChild(hd);
@@ -700,7 +731,7 @@
     root.classList.add('navmap', 'nma', 'nma-page');
     root.innerHTML = '';
     var hereSec = SEC[PAGE[here].section];
-    root.style.setProperty('--s-ink', hereSec.ink);
+    root.style.setProperty('--s-ink', hereSec.ink); root.style.setProperty('--glow', hereSec.line);
     head(root, '', 'Explore around ' + PAGE[here].name, '');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
@@ -808,7 +839,6 @@
       col.appendChild(ul); lanesEl.appendChild(col);
     });
     cap.appendChild(lanesEl);
-    note(root);
     if (scroller.scrollWidth > scroller.clientWidth + 4) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
   }
 

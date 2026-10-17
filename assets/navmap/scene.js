@@ -59,7 +59,9 @@
   var W = 2400, H = 780, GROUND = 226;
 
   /* ---- the setting: where a section's pages live ---- */
+  var SETTING = { hardware: 'workshop' };
   function setting(section, id, slug) {
+    section = SETTING[slug] || section;
     var s = '', i;
     var ground = 'url(#' + id + '-ground)';
     s += rect(0, 0, W, H, 'url(#' + id + '-sky)') + circ(1960, 96, 190, 'url(#' + id + '-sun)') + circ(1960, 96, 36, C.sun);
@@ -84,6 +86,10 @@
       s += soft(140, fy0, 2260, fy1, 60, C.pave, C.pave2);
       for (i = 0; i < 14; i++) s += line([[160 + i * 150, fy0 + 10], [140 + i * 150, fy1 - 10]], 1, C.pave2, ' opacity=".6"');
       s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofBlueShade, C.roofBlue, '', [820, 1580]);
+    } else if (section === 'workshop') {
+      s += soft(120, fy0, 2280, fy1, 70, C.gravel, C.gravel2);
+      A.setSeed(13); for (i = 0; i < 160; i++) s += circ(140 + Math.random() * 2120, fy0 + 20 + Math.random() * (fy1 - fy0 - 40), 1.6 + Math.random() * 2.2, C.gravel2, ' opacity=".7"');
+      s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofBlueShade, C.roofBlue, '', [820, 1580]) + A.fence(150, fy0 + 30, 7, 12) + A.fence(2170, fy0 + 30, 7, 12);
     } else if (section === 'project') {
       s += soft(120, fy0, 2280, fy1, 70, C.gravel, C.gravel2);
       A.setSeed(11); for (i = 0; i < 160; i++) s += circ(140 + Math.random() * 2120, fy0 + 20 + Math.random() * (fy1 - fy0 - 40), 1.6 + Math.random() * 2.2, C.gravel2, ' opacity=".7"');
@@ -120,7 +126,7 @@
     var sec = SEC[PAGE[here].section];
     root.classList.add('navmap', 'nma', 'nma-scene');
     root.innerHTML = '';
-    root.style.setProperty('--s-ink', sec.ink);
+    root.style.setProperty('--s-ink', sec.ink); root.style.setProperty('--glow', sec.line);
     A.head(root, '', 'Explore around ' + PAGE[here].name, '');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
@@ -134,7 +140,8 @@
     var POS = {}, slugs = [];
     function fit(k, slug) { return k * Math.min(1, Math.sqrt(72 / PLACE[slug].r)); }
     var cx = 1200, peer = flow.peer && PAGE[flow.peer] ? flow.peer : null;
-    var big = 2.5;
+    var PRIZE = { measurement: 1, hardware: 1, 'human-practices': 1 };
+    var big = PRIZE[here] ? 2.7 : 2.5;
     if (peer) {
       var hw = PLACE[here].r * fit(big, here), pw = PLACE[peer].r * fit(big, peer), gap = 70;
       var total = hw + pw + gap;
@@ -212,7 +219,6 @@
     A.keyboard(svg, places, (function () { var o = {}; slugs.forEach(function (k) { o[k] = POS[k][0]; }); return o; })(), function () { if (armed) { lit(armed, false); armed = null; } });
     document.addEventListener('click', function (e) { if (armed && !root.contains(e.target)) { lit(armed, false); armed = null; } });
 
-    A.note(root);
     if (scroller.scrollWidth > scroller.clientWidth + 4) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
   }
 
