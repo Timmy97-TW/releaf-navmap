@@ -546,45 +546,95 @@
     });
   }
 
+  /* ---- what both pictures share: the light, the beacon, the keyboard ---- */
+  function beacon(x, y, ink) {
+    // the "you are here" mark: a pin in the page's colour above the place, a ring breathing on the ground under it
+    return '<g class="nma-beacon" transform="translate(' + r1(x) + ',' + r1(y) + ')">' +
+      '<ellipse class="nma-beacon__ring" cx="0" cy="0" rx="26" ry="9"/>' +
+      '<g class="nma-beacon__pin"><path d="M0,-6 C-14,-24 -16,-34 -16,-42 a16,16 0 0 1 32,0 c0,8 -2,18 -16,36 z" fill="' + ink + '"/><circle cx="0" cy="-42" r="6" fill="#fff"/></g></g>';
+  }
+  // the light: the dusk lies over the whole scene; whatever is lit is lifted above it
+  function lighting(svg, places, order, placesG, litG) {
+    var home = {}; order.forEach(function (slug, i) { home[slug] = i; });
+    return {
+      lift: function (slugs) {
+        var set = {}; slugs.forEach(function (k) { set[k] = true; });
+        order.forEach(function (k) { var a = places[k].parentNode; if (set[k]) { litG.appendChild(a); a.classList.add('nma-lit'); } });
+      },
+      drop: function () {
+        order.forEach(function (k) { var a = places[k].parentNode; a.classList.remove('nma-lit', 'nma-active'); placesG.appendChild(a); });
+      }
+    };
+  }
+  function keyboard(svg, places, xs, onEscape) {
+    var sorted = Object.keys(places).sort(function (a, b) { return xs[a] - xs[b]; });
+    svg.addEventListener('keydown', function (e) {
+      var a = e.target.closest && e.target.closest('a[data-page], a'); if (!a) return;
+      var g = a.querySelector('.nma-place'); if (!g) return;
+      var i = sorted.indexOf(g.getAttribute('data-page'));
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var j = (i + (e.key === 'ArrowRight' ? 1 : -1) + sorted.length) % sorted.length;
+        places[sorted[j]].parentNode.focus();
+      } else if (e.key === 'Escape') { a.blur(); onEscape(); }
+    });
+  }
+  function note(root) {
+    root.appendChild(h('p', 'nma-note', 'Drawn in code after the team’s vision painting, with AI assistance. Every place opens its page.'));
+  }
+
   /* ---------------------------------------------------------------- the whole valley */
   function mountAll(root) {
     var c = common(root), here = c.here, id = 'nma' + Math.floor(Math.random() * 1e6);
     root.classList.add('navmap', 'nma', 'nma-all');
     root.innerHTML = '';
-    if (PAGE[here]) root.style.setProperty('--s-ink', SEC[PAGE[here].section].ink);
+    var hereSec = PAGE[here] ? SEC[PAGE[here].section] : null;
+    if (hereSec) root.style.setProperty('--s-ink', hereSec.ink);
     head(root, 'Every page', 'The whole valley', 'Read it left to right: the village, the lab, the studio, the yard, the field, the town.');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
     var inner = h('div', 'nma-inner'); scroller.appendChild(inner);
 
-    var s = '<svg class="nma-svg" viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="Every page of ReLEAF as a place in one valley">' + defs(id);
+    var order = ORDER.slice().sort(function (a, b) { return POS[a][1] - POS[b][1]; });
+    var s = '<svg class="nma-svg" viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="Every page of ReLEAF as a place in one valley. Arrow keys move between places.">' + defs(id);
     s += '<g class="nma-ground">' + valley(id) + '</g>';
-    s += '<rect class="nma-dusk" x="0" y="0" width="' + W + '" height="' + H + '"/>';
     s += '<g class="nma-zones">';
     ZONES.forEach(function (z) {
-      var sec = SEC[z[0]], cx = (z[2] + z[3]) / 2;
+      var sec = SEC[z[0]];
       s += '<line x1="' + (z[2] + 10) + '" y1="1180" x2="' + (z[3] - 10) + '" y2="1180" stroke="' + sec.line + '" stroke-width="4" stroke-linecap="round" opacity=".7"/>';
     });
-    s += '</g><g class="nma-routes" filter="url(#' + id + '-route)"></g>';
-    var order = ORDER.slice().sort(function (a, b) { return POS[a][1] - POS[b][1]; });
+    s += '</g>';
     s += '<g class="nma-places" filter="url(#' + id + '-brush)">';
     order.forEach(function (slug) {
       var p = POS[slug];
-      s += '<a href="' + c.href(slug) + '" aria-label="' + esc(PAGE[slug].name) + '"' + (slug === here ? ' aria-current="page"' : '') + '>' + placeGroup(slug, p[0], p[1], p[2], slug === here ? 'nma-is-here' : '') + '</a>';
+      s += '<a href="' + c.href(slug) + '" aria-label="' + esc(PAGE[slug].name) + (slug === here ? ', you are here' : '') + '"' + (slug === here ? ' aria-current="page"' : '') + '>' + placeGroup(slug, p[0], p[1], p[2], slug === here ? 'nma-is-here' : '') + '</a>';
     });
     s += '</g>';
+    s += '<rect class="nma-dusk" x="0" y="0" width="' + W + '" height="' + H + '"/>';
+    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
+    s += '<g class="nma-litlayer" filter="url(#' + id + '-brush)"></g>';
+    if (POS[here]) { var hp = POS[here]; s += beacon(hp[0], hp[1] - PLACE[here].r * 1.3 * hp[2] - 6, hereSec.ink); }
     s += '<rect class="nma-paper" x="0" y="0" width="' + W + '" height="' + H + '" filter="url(#' + id + '-grain)"/>';
     s += '<g class="nma-tags">'; ORDER.forEach(function (slug) { s += tagFor(slug, here); }); s += '</g>';
     s += '</svg>';
     inner.innerHTML = s;
     var svg = inner.querySelector('svg');
     var places = {}; inner.querySelectorAll('.nma-place').forEach(function (gg) { places[gg.getAttribute('data-page')] = gg; });
-    var routes = svg.querySelector('.nma-routes');
-    function tagPos(slug) { var p = POS[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - 20, p[1] - PLACE[slug].r * 1.1 * p[2]]; }
+    var routes = svg.querySelector('.nma-routes'), light = lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
+    function tagPos(slug) { var p = POS[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - (slug === here ? 64 : 20), p[1] - PLACE[slug].r * 1.1 * p[2] - (slug === here ? 50 : 0)]; }
+    function routesFrom(slug, cls) {
+      var from = POS[slug], r = '';
+      Object.keys(neighbours(slug)).forEach(function (k) {
+        var to = POS[k], mx = (from[0] + to[0]) / 2, my = Math.min(from[1], to[1]) - 50 - Math.abs(from[0] - to[0]) * .08;
+        r += '<path' + (cls ? ' class="' + cls + '"' : '') + ' d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"/>';
+      });
+      return r;
+    }
 
     var legend = h('ul', 'nma-legend'); root.appendChild(legend);
     ZONES.forEach(function (z) { var li = h('li', null, z[1]); li.style.setProperty('--s-line', SEC[z[0]].line); li.style.setProperty('--s-ink', SEC[z[0]].ink); legend.appendChild(li); });
     var cap = h('div', 'nma-cap'); root.appendChild(cap);
+    note(root);
     function fillCap(slug) {
       cap.innerHTML = '';
       if (!PAGE[slug]) return;
@@ -592,7 +642,7 @@
       cap.style.setProperty('--s-ink', sec.ink); cap.style.setProperty('--s-pill', sec.pill);
       var hd = h('div', 'nma-cap__head');
       hd.appendChild(h('span', 'nma-cap__eyebrow', (slug === here ? 'You are here · ' : '') + sec.name));
-      var nm = h('a', 'nma-cap__name', p.name); nm.href = c.href(slug); hd.appendChild(nm);
+      var nm = h('a', 'nma-cap__name', p.name); nm.href = c.href(slug); if (c.local) nm.addEventListener('click', function (e) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); }); hd.appendChild(nm);
       hd.appendChild(h('span', 'nma-cap__line', p.caption));
       cap.appendChild(hd);
       var ul = h('ul', 'nma-cap__links');
@@ -602,49 +652,54 @@
         a.appendChild(h('b', null, PAGE[l.to].name));
         a.appendChild(h('span', null, (l.lane === 'in' ? 'builds on · ' : 'leads to · ') + l.why));
         if (l.next) a.appendChild(h('i', 'nm-next', 'Read next'));
-        a.addEventListener('mouseenter', function () { places[l.to].classList.add('nma-active'); });
-        a.addEventListener('mouseleave', function () { places[l.to].classList.remove('nma-active'); });
+        a.addEventListener('mouseenter', function () { places[l.to].parentNode.classList.add('nma-active'); });
+        a.addEventListener('mouseleave', function () { places[l.to].parentNode.classList.remove('nma-active'); });
+        if (c.local) a.addEventListener('click', function (e) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: l.to, bubbles: true })); });
         li.appendChild(a); ul.appendChild(li);
       });
       cap.appendChild(ul);
     }
+    var current = null;
     function clear() {
+      current = null;
       root.removeAttribute('data-lit');
-      Object.keys(places).forEach(function (k) { places[k].classList.remove('nma-lit', 'nma-active'); });
+      light.drop();
       svg.querySelectorAll('.nma-tag.nma-show').forEach(function (t) { t.classList.remove('nma-show'); });
       routes.innerHTML = '';
     }
-    function light(slug) {
+    function lightUp(slug) {
+      if (current === slug) return;
       clear();
+      current = slug;
       root.setAttribute('data-lit', slug);
-      var nb = neighbours(slug), from = POS[slug], shown = [slug];
-      places[slug].classList.add('nma-lit', 'nma-active');
-      var r = '';
-      Object.keys(nb).forEach(function (k) {
-        places[k].classList.add('nma-lit'); shown.push(k);
-        var to = POS[k], mx = (from[0] + to[0]) / 2, my = Math.min(from[1], to[1]) - 50 - Math.abs(from[0] - to[0]) * .08;
-        r += '<path d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"/>';
-      });
-      routes.innerHTML = r;
+      var shown = [slug].concat(Object.keys(neighbours(slug)));
+      light.lift(shown);
+      places[slug].parentNode.classList.add('nma-active');
+      routes.innerHTML = routesFrom(slug);
       layoutTags(svg, tagPos, shown);
       shown.forEach(function (k) { svg.querySelector('.nma-tag[data-for="' + k + '"]').classList.add('nma-show'); });
       fillCap(slug);
     }
-    function settle() { clear(); fillCap(here); }
+    function settle() {
+      clear();
+      // at rest the page you are on shows its own links, quietly
+      if (POS[here]) routes.innerHTML = routesFrom(here, 'nma-rest');
+      fillCap(here);
+    }
 
     var touch = window.matchMedia('(hover: none)').matches, viaTouch = false, armed = null, hideT = 0;
     svg.addEventListener('pointerdown', function (e) { viaTouch = e.pointerType !== 'mouse'; }, true);
-    Object.keys(places).forEach(function (slug) {
-      var a = places[slug].parentNode;
-      a.addEventListener('mouseenter', function () { if (!touch && !viaTouch) { clearTimeout(hideT); light(slug); } });
-      a.addEventListener('mouseleave', function () { if (!touch && !viaTouch) { clearTimeout(hideT); hideT = setTimeout(settle, 160); } });
-      a.addEventListener('focus', function () { light(slug); });
-      a.addEventListener('blur', function () { hideT = setTimeout(settle, 160); });
-      a.addEventListener('click', function (e) {
-        if ((touch || viaTouch) && armed !== slug) { e.preventDefault(); armed = slug; light(slug); return; }
-        if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); }
-      });
+    function placeOf(t) { var a = t && t.closest ? t.closest('a') : null; var gg = a && a.querySelector('.nma-place'); return gg ? gg.getAttribute('data-page') : null; }
+    svg.addEventListener('pointerover', function (e) { if (touch || viaTouch) return; var k = placeOf(e.target); if (k) { clearTimeout(hideT); lightUp(k); } });
+    svg.addEventListener('pointerout', function (e) { if (touch || viaTouch) return; if (placeOf(e.target) && !placeOf(e.relatedTarget)) { clearTimeout(hideT); hideT = setTimeout(settle, 180); } });
+    svg.addEventListener('focusin', function (e) { var k = placeOf(e.target); if (k) { clearTimeout(hideT); lightUp(k); } });
+    svg.addEventListener('focusout', function (e) { if (placeOf(e.target) && !placeOf(e.relatedTarget)) hideT = setTimeout(settle, 180); });
+    svg.addEventListener('click', function (e) {
+      var k = placeOf(e.target); if (!k) return;
+      if ((touch || viaTouch) && armed !== k) { e.preventDefault(); armed = k; lightUp(k); return; }
+      if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: k, bubbles: true })); }
     });
+    keyboard(svg, places, (function () { var o = {}; ORDER.forEach(function (k) { o[k] = POS[k][0]; }); return o; })(), settle);
     document.addEventListener('click', function (e) { if (armed && !root.contains(e.target)) { armed = null; settle(); } });
     settle();
     if (scroller.scrollWidth > scroller.clientWidth + 4 && POS[here]) scroller.scrollLeft = POS[here][0] / W * scroller.scrollWidth - scroller.clientWidth / 2;
@@ -656,7 +711,8 @@
     if (!PAGE[here]) return;
     root.classList.add('navmap', 'nma', 'nma-page');
     root.innerHTML = '';
-    root.style.setProperty('--s-ink', SEC[PAGE[here].section].ink);
+    var hereSec = SEC[PAGE[here].section];
+    root.style.setProperty('--s-ink', hereSec.ink);
     head(root, 'Where this page sits', 'Explore our project', 'Down the road to the left, what this page builds on. To the right, where it leads.');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
@@ -665,7 +721,7 @@
     var links = linksOf(here);
     var ins = links.filter(function (l) { return l.lane === 'in'; }), outs = links.filter(function (l) { return l.lane !== 'in'; });
     var PW = 2400, PH = 720, GY = 440;
-    var s = '<svg class="nma-svg" viewBox="0 0 ' + PW + ' ' + PH + '" role="group" aria-label="' + esc(PAGE[here].name) + ' and the pages it links to">' + defs(id);
+    var s = '<svg class="nma-svg" viewBox="0 0 ' + PW + ' ' + PH + '" role="group" aria-label="' + esc(PAGE[here].name) + ' and the pages it links to. Arrow keys move between places.">' + defs(id);
     s += '<g class="nma-ground"><rect x="0" y="0" width="' + PW + '" height="' + PH + '" fill="url(#' + id + '-sky)"/>' + circ(1900, 70, 180, 'url(#' + id + '-sun)') + circ(1900, 70, 34, C.sun) + ell(420, 70, 110, 12, C.white, ' opacity=".4"') + ell(1300, 50, 140, 12, C.white, ' opacity=".35"');
     s += '<g filter="url(#' + id + '-brushsoft)">' + mountains(PW, 150, .62, 'url(#' + id + '-mist)') + '</g>';
     s += '<g filter="url(#' + id + '-brush)">' + rect(0, 210, PW, PH - 210, 'url(#' + id + '-ground)') + farFields(200, 292, PW) + treeline(280, PW, 70, .5);
@@ -678,8 +734,6 @@
     [[60, 690], [2340, 700], [1200, 350], [700, 700], [1700, 706]].forEach(function (p) { s += tree(p[0], p[1], 1.05 + (p[0] % 3) * .1, (p[0] >> 4) % 3); });
     s += bush(300, 680, .9) + bush(2080, 690, .9) + hay(2260, 640, 1) + tuft(500, 700) + tuft(1900, 710);
     s += '</g></g>';
-    s += '<rect class="nma-dusk" x="0" y="0" width="' + PW + '" height="' + PH + '"/>';
-    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
     var POSP = {}; POSP[here] = [1200, GY + 96, 2.0 * Math.min(1, Math.sqrt(72 / PLACE[here].r))];
     function lane(list, dir) {
       var n = list.length; if (!n) return;
@@ -693,17 +747,22 @@
     s += '<g class="nma-places" filter="url(#' + id + '-brush)">';
     order.forEach(function (slug) {
       var p = POSP[slug];
-      if (slug === here) s += '<a aria-current="page" tabindex="0" aria-label="' + esc(PAGE[slug].name) + ', you are here">' + placeGroup(slug, p[0], p[1], p[2], 'nma-is-here nma-lit') + '</a>';
-      else s += '<a href="' + c.href(slug) + '" aria-label="' + esc(PAGE[slug].name) + '">' + placeGroup(slug, p[0], p[1], p[2], 'nma-lit') + '</a>';
+      if (slug === here) s += '<a aria-current="page" tabindex="0" aria-label="' + esc(PAGE[slug].name) + ', you are here">' + placeGroup(slug, p[0], p[1], p[2], 'nma-is-here') + '</a>';
+      else s += '<a href="' + c.href(slug) + '" aria-label="' + esc(PAGE[slug].name) + '">' + placeGroup(slug, p[0], p[1], p[2], '') + '</a>';
     });
     s += '</g>';
+    s += '<rect class="nma-dusk" x="0" y="0" width="' + PW + '" height="' + PH + '"/>';
+    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
+    s += '<g class="nma-litlayer" filter="url(#' + id + '-brush)"></g>';
+    var hp = POSP[here]; s += beacon(hp[0], hp[1] - PLACE[here].r * 1.3 * hp[2] - 6, hereSec.ink);
     s += '<rect class="nma-paper" x="0" y="0" width="' + PW + '" height="' + PH + '" filter="url(#' + id + '-grain)"/>';
     s += '<g class="nma-tags">'; Object.keys(POSP).forEach(function (slug) { s += tagFor(slug, here); }); s += '</g>';
     s += '</svg>';
     inner.innerHTML = s;
     var svg = inner.querySelector('svg');
     var places = {}; inner.querySelectorAll('.nma-place').forEach(function (gg) { places[gg.getAttribute('data-page')] = gg; });
-    layoutTags(svg, function (slug) { var p = POSP[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - 18, p[1] - PLACE[slug].r * 1.1 * p[2]]; }, Object.keys(POSP));
+    var light = lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
+    layoutTags(svg, function (slug) { var p = POSP[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - (slug === here ? 66 : 18), p[1] - PLACE[slug].r * 1.1 * p[2] - (slug === here ? 50 : 0)]; }, Object.keys(POSP));
     var routes = svg.querySelector('.nma-routes'), from = POSP[here];
     function drawRoutes(only) {
       var r = '';
@@ -711,28 +770,48 @@
         var to = POSP[l.to];
         if (only && only !== l.to) return;
         var mx = (from[0] + to[0]) / 2, my = Math.min(from[1], to[1]) - 80;
-        r += '<path d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"' + (l.next ? ' class="nma-next"' : '') + '/>';
+        r += '<path d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"' + (l.next ? ' class="nma-next"' : (only ? '' : ' class="nma-rest"')) + '/>';
       });
       routes.innerHTML = r;
     }
-    drawRoutes();
     var rows = {};
     function tagOf(slug) { return svg.querySelector('.nma-tag[data-for="' + slug + '"]'); }
     function lit(slug, on) {
-      if (on) { root.setAttribute('data-lit', slug); places[slug].classList.add('nma-active'); tagOf(slug).classList.add('nma-show'); if (rows[slug]) rows[slug].classList.add('nma-lit'); drawRoutes(slug); }
-      else { root.removeAttribute('data-lit'); places[slug].classList.remove('nma-active'); tagOf(slug).classList.remove('nma-show'); if (rows[slug]) rows[slug].classList.remove('nma-lit'); drawRoutes(); }
+      if (on) {
+        root.setAttribute('data-lit', slug);
+        light.lift(slug === here ? [here] : [here, slug]);
+        places[slug].parentNode.classList.add('nma-active');
+        tagOf(slug).classList.add('nma-show');
+        if (rows[slug]) rows[slug].classList.add('nma-lit');
+        drawRoutes(slug === here ? null : slug);
+      } else {
+        root.removeAttribute('data-lit');
+        light.drop();
+        tagOf(slug).classList.remove('nma-show');
+        if (rows[slug]) rows[slug].classList.remove('nma-lit');
+        drawRoutes();
+      }
     }
-    Object.keys(places).forEach(function (slug) {
-      var a = places[slug].parentNode;
-      a.addEventListener('mouseenter', function () { lit(slug, true); });
-      a.addEventListener('mouseleave', function () { lit(slug, false); });
-      a.addEventListener('focus', function () { lit(slug, true); });
-      a.addEventListener('blur', function () { lit(slug, false); });
-      a.addEventListener('click', function (e) { if (slug === here) { e.preventDefault(); return; } if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); } });
+    drawRoutes();
+    var touch = window.matchMedia('(hover: none)').matches, viaTouch = false, armed = null;
+    svg.addEventListener('pointerdown', function (e) { viaTouch = e.pointerType !== 'mouse'; }, true);
+    function placeOf(t) { var a = t && t.closest ? t.closest('a') : null; var gg = a && a.querySelector('.nma-place'); return gg ? gg.getAttribute('data-page') : null; }
+    svg.addEventListener('pointerover', function (e) { if (touch || viaTouch) return; var k = placeOf(e.target); if (k) lit(k, true); });
+    svg.addEventListener('pointerout', function (e) { if (touch || viaTouch) return; var k = placeOf(e.target); if (k && !placeOf(e.relatedTarget)) lit(k, false); });
+    svg.addEventListener('focusin', function (e) { var k = placeOf(e.target); if (k) lit(k, true); });
+    svg.addEventListener('focusout', function (e) { var k = placeOf(e.target); if (k && !placeOf(e.relatedTarget)) lit(k, false); });
+    svg.addEventListener('click', function (e) {
+      var k = placeOf(e.target); if (!k) return;
+      if (k === here) { e.preventDefault(); return; }
+      if ((touch || viaTouch) && armed !== k) { e.preventDefault(); if (armed) lit(armed, false); armed = k; lit(k, true); return; }
+      if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: k, bubbles: true })); }
     });
+    keyboard(svg, places, (function () { var o = {}; Object.keys(POSP).forEach(function (k) { o[k] = POSP[k][0]; }); return o; })(), function () { if (armed) { lit(armed, false); armed = null; } });
+    document.addEventListener('click', function (e) { if (armed && !root.contains(e.target)) { lit(armed, false); armed = null; } });
+
     var cap = h('div', 'nma-cap nma-cap--page'); root.appendChild(cap);
     var hd = h('div', 'nma-cap__head');
-    hd.appendChild(h('span', 'nma-cap__eyebrow', 'You are here · ' + SEC[PAGE[here].section].name));
+    hd.appendChild(h('span', 'nma-cap__eyebrow', 'You are here · ' + hereSec.name));
     hd.appendChild(h('span', 'nma-cap__name', PAGE[here].name));
     hd.appendChild(h('span', 'nma-cap__line', PAGE[here].caption));
     cap.appendChild(hd);
@@ -749,13 +828,14 @@
         if (l.next) a.appendChild(h('i', 'nm-next', 'Read next'));
         a.addEventListener('mouseenter', function () { lit(l.to, true); });
         a.addEventListener('mouseleave', function () { lit(l.to, false); });
-        a.addEventListener('click', function (e) { if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: l.to, bubbles: true })); } });
+        if (c.local) a.addEventListener('click', function (e) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: l.to, bubbles: true })); });
         rows[l.to] = a;
         li.appendChild(a); ul.appendChild(li);
       });
       col.appendChild(ul); lanesEl.appendChild(col);
     });
     cap.appendChild(lanesEl);
+    note(root);
     if (scroller.scrollWidth > scroller.clientWidth + 4) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
   }
 

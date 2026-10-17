@@ -12,17 +12,19 @@
 .nma .nma-paper { fill: #000; pointer-events: none; }
 
 /* the places */
-.nma .nma-place { cursor: pointer; transition: filter .6s cubic-bezier(.2,.7,.2,1), opacity .6s cubic-bezier(.2,.7,.2,1); }
+.nma .nma-place { cursor: pointer; }
 .nma .nma-hit { fill: transparent; }
-.nma .nma-art { transition: filter .5s cubic-bezier(.2,.7,.2,1); transform-box: fill-box; transform-origin: 50% 100%; }
-.nma[data-lit] .nma-place:not(.nma-lit) { filter: brightness(.62) saturate(.55); }
-.nma[data-lit] .nma-place.nma-lit .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .7)) drop-shadow(0 0 34px rgba(141, 220, 90, .4)); }
-.nma .nma-place.nma-active .nma-art, .nma .nma-place:hover .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 40px rgba(141, 220, 90, .5)); }
-.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px rgba(141, 220, 90, .55)); }
+.nma .nma-art { transition: filter .5s cubic-bezier(.2,.7,.2,1); }
+.nma .nma-litlayer .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .7)) drop-shadow(0 0 34px rgba(141, 220, 90, .4)); }
+.nma a.nma-active .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 40px rgba(141, 220, 90, .5)); }
+.nma-page .nma-places a.nma-active .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .6)); }
+.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px rgba(141, 220, 90, .45)); }
 
 /* the lit routes between a place and its neighbours */
 .nma .nma-routes path { fill: none; stroke: #8ddc5a; stroke-width: 6; stroke-linecap: round; opacity: .9; stroke-dasharray: 1 16; animation: nma-walk 2.4s linear infinite; }
 .nma .nma-routes path.nma-next { stroke-dasharray: none; stroke-width: 6; opacity: .8; }
+.nma .nma-routes path.nma-rest { stroke: #fff; stroke-width: 3.5; opacity: .5; stroke-dasharray: 2 12; animation: none; }
+.nma-page .nma-routes path.nma-rest { stroke: #8ddc5a; opacity: .55; stroke-width: 4; stroke-dasharray: 1 14; animation: nma-walk 2.4s linear infinite; }
 @keyframes nma-walk { to { stroke-dashoffset: -34; } }
 
 /* the name tags */
@@ -70,3 +72,19 @@
 .nma .nma-lanes .nma-cap__links { grid-template-columns: 1fr; margin: 0; }
 .nma .nma-cap__links a.nma-lit { background: var(--s-pill, #f5f5f5); }
 @media (max-width: 640px) { .nma .nma-lanes { grid-template-columns: 1fr; } }
+
+/* the picture frame */
+.nma .nma-scroll { box-shadow: inset 0 0 0 1px rgba(23, 23, 23, .07); }
+.nma .nma-svg { border-radius: inherit; }
+/* keyboard focus on a place */
+.nma .nma-svg a:focus { outline: none; }
+.nma .nma-svg a:focus-visible .nma-hit { stroke: #fff; stroke-width: 3; stroke-dasharray: 8 8; }
+/* the "you are here" beacon */
+.nma .nma-beacon { pointer-events: none; }
+.nma .nma-beacon__ring { fill: none; stroke: #8ddc5a; stroke-width: 3; opacity: .7; transform-origin: 0 0; transform-box: fill-box; animation: nma-breathe 3.2s ease-in-out infinite; }
+.nma .nma-beacon__pin { animation: nma-bob 3.2s ease-in-out infinite; }
+@keyframes nma-breathe { 0%, 100% { transform: scale(.85); opacity: .35; } 50% { transform: scale(1.1); opacity: .8; } }
+@keyframes nma-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+/* the disclosure under each picture */
+.nma .nma-note { margin: 14px 2px 0; font-size: 12.5px; color: #8a8a8a; }
+@media (prefers-reduced-motion: reduce) { .nma .nma-beacon__ring, .nma .nma-beacon__pin { animation: none; } }
