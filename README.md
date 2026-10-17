@@ -11,7 +11,24 @@ neighbours light while the rest dim; the panel beside the ring lists them with
 the reason for each link. Point at a section name to see how that section hangs
 together.
 
-Review page: https://timmy97-tw.github.io/releaf-navmap/
+Review page: https://timmy97-tw.github.io/releaf-navmap/ (the diagram) and
+https://timmy97-tw.github.io/releaf-navmap/art.html (the painted version).
+
+## Two versions, same logic
+
+**Diagram** (`index.html`, `navmap.js`): cards and wires, the wiki's section
+colours, the ring for the whole wiki.
+
+**Painted** (`art.html`, `art.js` + `art.css`): the same two maps as one
+valley drawn in the manner of the homepage's vision painting. Every page is a
+place; the valley reads left to right as the project does: the village (Team),
+the lab (Wet Lab), the studio (Dry Lab), the yard where the machine is built
+(Project), the field (Plants), the town (Engagement). Pointing at a place turns
+the valley to dusk and lights the place and the pages linked to it, with the
+routes drawn on the ground. The page map stands the page in the middle of a
+road with what it builds on to the left and where it leads to the right, a
+signpost under each saying why. All vector, drawn in code after the painting,
+AI-assisted; to be disclosed as such on the wiki.
 
 ## Where the choices come from
 
@@ -28,6 +45,8 @@ whole-wiki ring. Her valley stays in the repository for reference.
 | `assets/navmap/navmap-data.js` | Sections, pages, icons and the links with their lanes and phrases. The only file a page owner needs to edit. |
 | `assets/navmap/navmap.js` | Draws both maps. No dependencies. |
 | `assets/navmap/navmap.css` | Styles for both. White ground, the wiki's section colours. |
+| `assets/navmap/art.js`, `art.css` | The painted version: the 27 place drawings, the valley, the page road, the dusk-and-light behaviour. `data-art="page"` or `data-art="all"` on the section. |
+| `art.html` | The review page for the painted version. |
 | `index.html` | The review page: a page picker, both maps in a mock subpage, the design logic, how to install. |
 | `reference/jacquelyn-valley/` | The prototype whose page choices this follows. |
 

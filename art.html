@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReLEAF navigation map · painted</title>
+<meta name="description" content="The painted version of the navigation map: every page of the wiki as a place in one valley, drawn after the homepage's vision painting.">
+<link rel="stylesheet" href="assets/navmap/navmap.css">
+<link rel="stylesheet" href="assets/navmap/art.css">
+<style>
+@font-face { font-family: Inter; src: url(assets/inter-variable.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+:root { --ink: #171717; --ink-2: #404040; --ink-3: #6b6b6b; --line: #e5e5e5; --well: #fafafa; --leaf: #23684a; --max: 1120px; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #fff; color: var(--ink); font: 16px/1.6 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--leaf); }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+@media (min-width: 640px) { .wrap { padding: 0 24px; } }
+.bar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.82); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid rgba(0,0,0,.08); }
+.bar .wrap { display: flex; align-items: center; gap: 22px; height: 52px; }
+.bar b { font-size: 15px; white-space: nowrap; }
+.bar nav { display: flex; gap: 20px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.bar nav a { color: var(--ink-2); text-decoration: none; font-size: 13px; white-space: nowrap; }
+.bar nav a:hover, .bar nav a[aria-current] { color: var(--ink); }
+.tabs { display: inline-flex; padding: 3px; border-radius: 10px; background: #f0f0f2; }
+.tabs a { padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
+.tabs a[aria-current] { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.hero { padding: 72px 0 8px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--leaf); margin: 0 0 10px; }
+h1 { font-size: clamp(2rem, 4.6vw, 3.2rem); line-height: 1.08; letter-spacing: -.03em; margin: 0; max-width: 18ch; }
+.lede { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--ink-2); max-width: 64ch; margin: 18px 0 0; line-height: 1.55; }
+.block { padding: 72px 0 0; }
+.block h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); letter-spacing: -.02em; line-height: 1.15; margin: 0 0 10px; }
+.block .sec-lede { font-size: 1.05rem; color: var(--ink-2); max-width: 70ch; margin: 0 0 26px; }
+.mock { border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: #fff; }
+.mock__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--well); }
+.mock__tools label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.mock__tools select { font: inherit; font-size: 14px; font-weight: 500; color: var(--ink); padding: 7px 34px 7px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+.mock__page { padding: 34px 0 0; }
+.ghost { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+.ghost h3 { margin: 0 0 16px; font-size: 22px; letter-spacing: -.01em; color: #c7c7cc; }
+.ghost p { height: 10px; background: #eceef0; border-radius: 6px; margin: 10px 0; }
+.ghost p:nth-child(3n) { width: 82%; } .ghost p:nth-child(4n) { width: 60%; }
+.mock .navmap { margin-top: 56px; }
+.mock .navmap + .navmap { margin-top: 80px; }
+.footer2 { margin-top: 56px; border-top: 1px solid var(--line); background: var(--well); }
+.footer2 .in { max-width: var(--max); margin: 0 auto; padding: 30px 24px 36px; display: grid; gap: 20px 24px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.footer2 h4 { margin: 0 0 10px; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+.footer2 ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; font-size: 13.5px; color: var(--ink-2); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.cards div { border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.cards strong { display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: -.01em; }
+.cards p { margin: 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.5; }
+@media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+.zones { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 0 0 26px; }
+.zones div { border-radius: 14px; padding: 12px 14px; border: 1px solid var(--line); font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
+.zones strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+.zones span { display: block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+@media (max-width: 900px) { .zones { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .zones { grid-template-columns: repeat(2, 1fr); } }
+.foot { padding: 72px 0 60px; font-size: 13.5px; color: var(--ink-3); }
+.foot a { color: inherit; }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <b>ReLEAF navigation map</b>
+  <span class="tabs"><a href="index.html">Diagram</a><a href="art.html" aria-current="page">Painted</a></span>
+  <nav><a href="#page">Page map</a><a href="#all">Whole valley</a><a href="#logic">The logic</a><a href="reference/jacquelyn-valley/">Jacquelyn's valley</a></nav>
+</div></div>
+
+<header class="wrap hero">
+  <p class="eyebrow">Navigation map · painted version</p>
+  <h1>Every page is a place in one valley.</h1>
+  <p class="lede">The same two maps as the diagram, drawn as a picture in the manner of the homepage's vision painting. The valley reads left to right the way the project does: the village, the lab, the studio, the yard where the machine is built, the field, the town. Point at a place and dusk falls on everything but it and the places it links to, the way the reactors light the fields on the homepage.</p>
+</header>
+
+<section class="block" id="page"><div class="wrap">
+  <h2>In a subpage</h2>
+  <p class="sec-lede">The page you are on stands large in the middle of the road. What it builds on is down the road to the left, where it leads is to the right, and a signpost under each place says why. The lit route marks the page to read next.</p>
+  <div class="mock">
+    <div class="mock__tools">
+      <label for="here">Reading</label>
+      <select id="here"></select>
+    </div>
+    <div class="mock__page">
+      <div class="ghost" aria-hidden="true"><h3>Last section of the page</h3><p></p><p></p><p></p><p></p></div>
+      <section class="navmap" id="pagemap" data-art="page" data-local data-manual data-here="description" data-root="https://timmy97-tw.github.io/releaf-wiki/"></section>
+      <section class="navmap" id="allmap" data-art="all" data-local data-manual data-here="description" data-root="https://timmy97-tw.github.io/releaf-wiki/"></section>
+      <footer class="footer2"><div class="in">
+        <div><h4>Project</h4><ul><li>Description</li><li>Biomanufacturing</li><li>Engineering</li><li>Development</li><li>Contribution</li><li>Results</li></ul></div>
+        <div><h4>Wet Lab</h4><ul><li>Experiments</li><li>Parts</li><li>Plants</li><li>Measurement</li><li>Safety</li><li>Notebook</li></ul></div>
+        <div><h4>Dry Lab</h4><ul><li>Math Model</li><li>Hardware</li><li>Digital Twin</li><li>Protein Design</li><li>Dry Lab Notebook</li></ul></div>
+        <div><h4>Engagement</h4><ul><li>Integrated Human Practices</li><li>Education</li><li>Entrepreneurship</li><li>Sustainability</li><li>Laws and Regulations</li><li>Geospatial Analysis</li><li>Data Physicalization</li></ul></div>
+        <div><h4>Team</h4><ul><li>Members</li><li>Attribution</li><li>Milestones</li></ul></div>
+      </div></footer>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="all"><div class="wrap">
+  <h2>The whole valley</h2>
+  <p class="sec-lede">The second picture above. All 27 pages stand in one landscape, each as the thing it is about, placed so that the valley tells the project's story from left to right. One road joins everything; the river crosses the field. Pointing at a place dims the valley to dusk and lights the place and every page linked to it, with the routes between them; the caption under the picture lists those links with their reasons.</p>
+</div></section>
+
+<section class="block" id="logic"><div class="wrap">
+  <h2>The logic of the picture</h2>
+  <p class="sec-lede">Six zones along one road, in the order the work happened. A reader who knows where a page stands in the valley knows what kind of page it is.</p>
+  <div class="zones">
+    <div><span style="color:#845c0f">Team</span><strong>The village</strong>Where the people are: their houses, the flag of the season, the notice board of who did what.</div>
+    <div><span style="color:#3d6a4b">Wet Lab</span><strong>The lab</strong>The bench with its flasks, the rack of parts, the photometer, the safety post, the open notebook.</div>
+    <div><span style="color:#3f5a66">Dry Lab</span><strong>The studio</strong>The whiteboard with the curve, the Digital Twin's screen, the peptide model, the laptop.</div>
+    <div><span style="color:#a3375f">Project</span><strong>The yard</strong>Where the machine is built: the reactor, the gear bench, the reactor shed, the stage steps, the toolbox, the results board, and the ReLEAF sign at the road.</div>
+    <div><span style="color:#3d6a4b">Plants</span><strong>The field</strong>The crop rows with the farmers in them, and the survey map at the field edge.</div>
+    <div><span style="color:#85502f">Engagement</span><strong>The town</strong>The round table, the school, the market stall, the turbine, the council hall, the sculpture in the square.</div>
+  </div>
+  <div class="cards">
+    <div><strong>Same drawings, two pictures</strong><p>Each page has one drawing. The whole valley uses all 27 in their places; the page map borrows the ones that page links to and stands them along a road, so the two pictures teach the same vocabulary.</p></div>
+    <div><strong>Light as the link</strong><p>Dusk and light are the homepage's own language for the reactors. Here the lit places are the linked pages, and the routes between them are drawn on the ground, so a connection is seen, not inferred.</p></div>
+    <div><strong>Drawn in code, after the painting</strong><p>Everything is vector, built from her palette and her flat shapes with a dry-brush edge. It stays editable: a place can be moved, redrawn, or replaced by a hand-drawn layer at the same spot. AI-assisted, to be disclosed as such.</p></div>
+  </div>
+</div></section>
+
+<footer class="wrap foot">ReLEAF 2026 · <a href="https://github.com/Timmy97-TW/releaf-navmap">github.com/Timmy97-TW/releaf-navmap</a> · the diagram version is at <a href="index.html">index.html</a>.</footer>
+
+<script src="assets/navmap/navmap-data.js"></script>
+<script src="assets/navmap/art.js"></script>
+<script>
+(function () {
+  var D = window.NAVMAP_DATA;
+  var sel = document.getElementById('here');
+  D.sections.forEach(function (s) {
+    var og = document.createElement('optgroup'); og.label = s.name;
+    D.pages.forEach(function (p) { if (p.section !== s.id) return; var o = document.createElement('option'); o.value = p.slug; o.textContent = p.name; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+  var pm = document.getElementById('pagemap'), am = document.getElementById('allmap');
+  function go(slug) {
+    sel.value = slug;
+    pm.setAttribute('data-here', slug); am.setAttribute('data-here', slug);
+    NavMapArt.mount(pm); NavMapArt.mount(am);
+    try { history.replaceState(null, '', '#' + slug); } catch (e) {}
+  }
+  sel.addEventListener('change', function () { go(sel.value); });
+  document.addEventListener('navmap:go', function (e) {
+    if (!e.detail) return;
+    go(e.detail);
+    try { pm.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (err) {}
+  });
+  var start = (location.hash || '').slice(1);
+  go(D.pages.some(function (p) { return p.slug === start; }) ? start : 'description');
+})();
+</script>
+</body>
+</html>

@@ -22,6 +22,9 @@ a { color: var(--leaf); }
 .bar nav { display: flex; gap: 20px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
 .bar nav a { color: var(--ink-2); text-decoration: none; font-size: 13px; white-space: nowrap; }
 .bar nav a:hover { color: var(--ink); }
+.tabs { display: inline-flex; padding: 3px; border-radius: 10px; background: #f0f0f2; }
+.tabs a { padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
+.tabs a[aria-current] { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 
 .hero { padding: 72px 0 8px; }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--leaf); margin: 0 0 10px; }
@@ -69,6 +72,7 @@ pre { margin: 0; padding: 16px 18px; border-radius: 14px; background: #1d1d1f; c
 
 <div class="bar"><div class="wrap">
   <b>ReLEAF navigation map</b>
+  <span class="tabs"><a href="index.html" aria-current="page">Diagram</a><a href="art.html">Painted</a></span>
   <nav><a href="#page">Page map</a><a href="#all">Whole wiki</a><a href="#logic">Design logic</a><a href="#install">In a page</a><a href="reference/jacquelyn-valley/">Jacquelyn's valley</a></nav>
 </div></div>
 

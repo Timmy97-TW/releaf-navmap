@@ -1,0 +1,65 @@
+/* ReLEAF navigation map, the painted version. Needs navmap.css for the head. */
+.nma .nma-stage { position: relative; }
+.nma .nma-scroll { overflow: hidden; border-radius: 22px; }
+.nma .nma-inner { position: relative; }
+.nma .nma-svg { display: block; width: 100%; height: auto; font-family: inherit; }
+.nma .nma-svg a { outline: none; }
+
+/* the ground, and the dusk that falls on it when a place is lit */
+.nma .nma-ground { transition: filter .45s ease; }
+.nma .nma-dusk { fill: #1b2a3c; opacity: 0; pointer-events: none; mix-blend-mode: multiply; transition: opacity .45s ease; }
+.nma[data-lit] .nma-dusk { opacity: .5; }
+.nma .nma-paper { fill: #000; pointer-events: none; }
+
+/* the places */
+.nma .nma-place { cursor: pointer; transition: filter .45s ease, opacity .45s ease; }
+.nma .nma-hit { fill: transparent; }
+.nma .nma-art { transition: filter .3s ease; transform-box: fill-box; transform-origin: 50% 100%; }
+.nma[data-lit] .nma-place:not(.nma-lit) { filter: brightness(.55) saturate(.5); }
+.nma[data-lit] .nma-place.nma-lit .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 30px rgba(141, 220, 90, .5)); }
+.nma .nma-place.nma-active .nma-art, .nma .nma-place:hover .nma-art { filter: drop-shadow(0 0 16px rgba(141, 220, 90, .95)) drop-shadow(0 0 36px rgba(141, 220, 90, .6)); }
+.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px rgba(141, 220, 90, .55)); }
+
+/* the lit routes between a place and its neighbours */
+.nma .nma-routes path { fill: none; stroke: #8ddc5a; stroke-width: 7; stroke-linecap: round; opacity: .95; stroke-dasharray: 1 14; animation: nma-walk 1.6s linear infinite; }
+.nma .nma-routes path.nma-next { stroke-dasharray: none; stroke-width: 6; opacity: .8; }
+@keyframes nma-walk { to { stroke-dashoffset: -30; } }
+
+/* the name tags */
+.nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.nma .nma-tag.nma-show { opacity: 1; }
+.nma .nma-tag__bg { fill: rgba(23, 23, 23, .86); }
+.nma .nma-tag__t { font-size: 22px; font-weight: 600; fill: #fff; text-anchor: middle; dominant-baseline: middle; letter-spacing: -.01em; }
+.nma-page .nma-tag__bg { fill: #fff; stroke: var(--s-ink, #171717); stroke-width: 1.5; }
+.nma-page .nma-tag__t { fill: var(--s-ink, #171717); font-size: 24px; }
+
+/* text painted into the picture */
+.nma .nma-zone { font-size: 24px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+.nma .nma-sign { font-size: 14px; font-weight: 600; fill: #2b2b2b; }
+.nma .nma-sign--big { font-size: 26px; font-weight: 700; fill: #f6f3e8; letter-spacing: .04em; }
+.nma .nma-sign--tiny { font-size: 12px; fill: #6f5430; }
+.nma .nma-lane { font-size: 30px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; fill: #ffffff; opacity: .92; }
+.nma .nma-lane__arrow { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; opacity: .9; }
+
+/* the caption under the valley */
+.nma .nma-cap { display: grid; gap: 10px; margin: 18px 2px 0; min-height: 120px; }
+.nma .nma-cap__head { display: grid; gap: 2px; }
+.nma .nma-cap__eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--s-ink, #6b6b6b); }
+.nma .nma-cap__name { font-size: 20px; font-weight: 650; letter-spacing: -.015em; color: #171717; text-decoration: none; }
+.nma .nma-cap__line { font-size: 14px; color: #6b6b6b; }
+.nma .nma-cap__links { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 18px; }
+.nma .nma-cap__links a { display: grid; gap: 1px; padding: 8px 10px; margin: 0 -10px; border-radius: 10px; color: #171717; text-decoration: none; transition: background .15s; }
+.nma .nma-cap__links a:hover { background: var(--s-pill, #f5f5f5); }
+.nma .nma-cap__links b { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.nma .nma-cap__links span { font-size: 12.5px; color: #6b6b6b; }
+.nma .nma-cap__links i { font-style: normal; }
+
+@media (max-width: 760px) {
+  .nma .nma-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; margin: 0 calc(-1 * var(--nm-pad, 20px)); border-radius: 0; }
+  .nma .nma-scroll::-webkit-scrollbar { display: none; }
+  .nma .nma-inner { width: 1100px; }
+  .nma .nma-inner--page { width: 1000px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nma .nma-routes path { animation: none; }
+}
