@@ -55,8 +55,6 @@
     attributions:             { before: ['team', 'milestones'], after: ['experiments', 'contribution', 'human-practices'] },
     milestones:               { before: ['team', 'description'], after: ['engineering', 'development', 'contribution', 'results'] }
   };
-  // the words for the caption, by lane
-  var LANE = { before: 'Before', peer: 'Beside', after: 'After' };
 
   var W = 2400, H = 780, GROUND = 226;
 
@@ -81,11 +79,11 @@
     if (section === 'wetlab' && slug !== 'plant') {
       s += soft(140, fy0, 2260, fy1, 60, C.pave, C.pave2);
       for (i = 0; i < 14; i++) s += line([[160 + i * 150, fy0 + 10], [140 + i * 150, fy1 - 10]], 1, C.pave2, ' opacity=".6"');
-      s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofGreenShade, C.roofGreen, '');
+      s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofGreenShade, C.roofGreen, '', [820, 1580]);
     } else if (section === 'drylab') {
       s += soft(140, fy0, 2260, fy1, 60, C.pave, C.pave2);
       for (i = 0; i < 14; i++) s += line([[160 + i * 150, fy0 + 10], [140 + i * 150, fy1 - 10]], 1, C.pave2, ' opacity=".6"');
-      s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofBlueShade, C.roofBlue, '');
+      s += A.pavilion(300, 2100, fy0 + 40, 250, C.roofBlueShade, C.roofBlue, '', [820, 1580]);
     } else if (section === 'project') {
       s += soft(120, fy0, 2280, fy1, 70, C.gravel, C.gravel2);
       A.setSeed(11); for (i = 0; i < 160; i++) s += circ(140 + Math.random() * 2120, fy0 + 20 + Math.random() * (fy1 - fy0 - 40), 1.6 + Math.random() * 2.2, C.gravel2, ' opacity=".7"');
@@ -123,7 +121,7 @@
     root.classList.add('navmap', 'nma', 'nma-scene');
     root.innerHTML = '';
     root.style.setProperty('--s-ink', sec.ink);
-    A.head(root, 'Where this page sits', 'Explore our project', 'What comes before this page stands to the left, what comes after to the right. A route curving back is the work learning from itself.');
+    A.head(root, '', 'Explore around ' + PAGE[here].name, '');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
     var inner = h('div', 'nma-inner nma-inner--scene'); scroller.appendChild(inner);
@@ -162,6 +160,9 @@
     lane(flow.after, rightEdge, 2260, 1);
 
     var order = slugs.slice().sort(function (a, b) { return POS[a][1] - POS[b][1]; });
+    s += '<g class="nma-pools">';
+    [here].concat(peer ? [peer] : []).forEach(function (k) { var p = POS[k], rx = PLACE[k].r * p[2] * 1.15; s += ell(p[0], p[1] + 6, rx, rx * .26, C.white, ' opacity=".28"') + ell(p[0], p[1] + 6, rx * .7, rx * .18, C.white, ' opacity=".22"'); });
+    s += '</g>';
     s += '<g class="nma-places" filter="url(#' + id + '-brush)">';
     order.forEach(function (slug) {
       var p = POS[slug];
@@ -170,7 +171,6 @@
     });
     s += '</g>';
     s += '<rect class="nma-dusk" x="0" y="0" width="' + W + '" height="' + H + '"/>';
-    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
     s += '<g class="nma-litlayer" filter="url(#' + id + '-brush)"></g>';
     var hp = POS[here]; s += A.beacon(hp[0], hp[1] - PLACE[here].r * 1.3 * hp[2] - 6, sec.ink);
     s += '<rect class="nma-paper" x="0" y="0" width="' + W + '" height="' + H + '" filter="url(#' + id + '-grain)"/>';
@@ -182,56 +182,18 @@
     var light = A.lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
     A.layoutTags(svg, function (slug) { var p = POS[slug]; var up = slug === here ? 66 : 18; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - up, p[1] - PLACE[slug].r * 1.1 * p[2] - (slug === here ? 50 : 0)]; }, slugs);
 
-    // the routes: the flow runs left to right along the road; the loop arcs back over the top
-    var routes = svg.querySelector('.nma-routes');
-    function seq() {
-      var left = flow.before.filter(function (k) { return POS[k]; }), right = flow.after.filter(function (k) { return POS[k]; });
-      var chain = left.slice().reverse().concat([here]).concat(peer ? [peer] : []).concat(right);
-      return chain;
-    }
-    function routeBetween(a, b, cls) {
-      var pa = POS[a], pb = POS[b], mx = (pa[0] + pb[0]) / 2, my = Math.min(pa[1], pb[1]) - 60;
-      return '<path' + (cls ? ' class="' + cls + '"' : '') + ' d="M' + r1(pa[0]) + ',' + r1(pa[1] - 6) + ' Q' + r1(mx) + ',' + r1(my) + ' ' + r1(pb[0]) + ',' + r1(pb[1] - 6) + '"/>';
-    }
-    function loopPath(cls) {
-      if (!flow.loop || !POS[flow.loop]) return '';
-      var pa = POS[flow.loop], pb = POS[here];
-      var top = Math.min(pa[1], pb[1]) - PLACE[here].r * pb[2] * 1.5 - 90;
-      return '<path class="nma-loop ' + (cls || '') + '" d="M' + r1(pa[0]) + ',' + r1(pa[1] - PLACE[flow.loop].r * pa[2] * 1.2) + ' C' + r1(pa[0]) + ',' + r1(top) + ' ' + r1(pb[0]) + ',' + r1(top) + ' ' + r1(pb[0]) + ',' + r1(pb[1] - PLACE[here].r * pb[2] * 1.45) + '"/>' +
-        '<path class="nma-loop__head ' + (cls || '') + '" d="M' + r1(pb[0] - 14) + ',' + r1(pb[1] - PLACE[here].r * pb[2] * 1.45 - 26) + ' l14,22 l14,-22"/>';
-    }
-    function drawRoutes(only) {
-      var r = '', chain = seq();
-      if (only && only !== here) {
-        // the lit place and its link to the page, plus the loop if it is the looping one
-        r += routeBetween(here, only, 'nma-hot');
-        if (peer && only === peer) r = routeBetween(here, peer, 'nma-hot');
-        if (flow.loop === only) r += loopPath('nma-hot');
-      } else {
-        for (var i = 0; i < chain.length - 1; i++) r += routeBetween(chain[i], chain[i + 1], 'nma-rest' + (chain[i] === here || chain[i + 1] === here ? ' nma-near' : ''));
-        if (peer) r += '<path class="nma-peer" d="M' + r1(POS[here][0]) + ',' + r1(POS[here][1] - PLACE[here].r * POS[here][2] * .7) + ' L' + r1(POS[peer][0]) + ',' + r1(POS[peer][1] - PLACE[peer].r * POS[peer][2] * .7) + '"/>';
-        r += loopPath('nma-rest');
-      }
-      routes.innerHTML = r;
-    }
-    drawRoutes();
-
-    var rows = {};
     function tagOf(slug) { return svg.querySelector('.nma-tag[data-for="' + slug + '"]'); }
     function lit(slug, on) {
       if (on) {
         root.setAttribute('data-lit', slug);
+        root.classList.toggle('nma-looping', flow.loop === slug);
         light.lift(slug === here ? [here] : [here, slug]);
         places[slug].parentNode.classList.add('nma-active');
         tagOf(slug).classList.add('nma-show'); tagOf(here).classList.add('nma-show');
-        if (rows[slug]) rows[slug].classList.add('nma-lit');
-        drawRoutes(slug);
       } else {
-        root.removeAttribute('data-lit');
+        root.removeAttribute('data-lit'); root.classList.remove('nma-looping');
         light.drop();
         tagOf(slug).classList.remove('nma-show'); tagOf(here).classList.remove('nma-show');
-        if (rows[slug]) rows[slug].classList.remove('nma-lit');
-        drawRoutes();
       }
     }
     var touch = window.matchMedia('(hover: none)').matches, viaTouch = false, armed = null;
@@ -250,36 +212,6 @@
     A.keyboard(svg, places, (function () { var o = {}; slugs.forEach(function (k) { o[k] = POS[k][0]; }); return o; })(), function () { if (armed) { lit(armed, false); armed = null; } });
     document.addEventListener('click', function (e) { if (armed && !root.contains(e.target)) { lit(armed, false); armed = null; } });
 
-    // under the picture: the page, then before / beside / after, each with its reason; the loop named last
-    var why = {}; A.linksOf(here).forEach(function (l) { why[l.to] = l; });
-    var cap = h('div', 'nma-cap nma-cap--page'); root.appendChild(cap);
-    var hd = h('div', 'nma-cap__head');
-    hd.appendChild(h('span', 'nma-cap__eyebrow', 'You are here · ' + sec.name));
-    hd.appendChild(h('span', 'nma-cap__name', PAGE[here].name));
-    hd.appendChild(h('span', 'nma-cap__line', PAGE[here].caption));
-    cap.appendChild(hd);
-    var lanesEl = h('div', 'nma-lanes nma-lanes--scene');
-    [['before', flow.before], ['peer', peer ? [peer] : []], ['after', flow.after]].forEach(function (L) {
-      var list = L[1].filter(function (k) { return PAGE[k]; }); if (!list.length) return;
-      var col = h('div', 'nma-lanecol nma-lanecol--' + L[0]);
-      var hh = h('h4', null, LANE[L[0]]); hh.setAttribute('data-no-toc', ''); col.appendChild(hh);
-      var ul = h('ul', 'nma-cap__links');
-      list.forEach(function (k) {
-        var l = why[k] || {}, li = h('li'), a = h('a'); a.href = c.href(k);
-        var ls = SEC[PAGE[k].section]; a.style.setProperty('--s-ink', ls.ink); a.style.setProperty('--s-pill', ls.pill);
-        a.appendChild(h('b', null, PAGE[k].name));
-        a.appendChild(h('span', null, l.why || PAGE[k].caption));
-        if (l.next) a.appendChild(h('i', 'nm-next', 'Read next'));
-        if (flow.loop === k) a.appendChild(h('i', 'nm-next nm-loop', 'Loops back'));
-        a.addEventListener('mouseenter', function () { lit(k, true); });
-        a.addEventListener('mouseleave', function () { lit(k, false); });
-        if (c.local) a.addEventListener('click', function (e) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: k, bubbles: true })); });
-        rows[k] = a;
-        li.appendChild(a); ul.appendChild(li);
-      });
-      col.appendChild(ul); lanesEl.appendChild(col);
-    });
-    cap.appendChild(lanesEl);
     A.note(root);
     if (scroller.scrollWidth > scroller.clientWidth + 4) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
   }

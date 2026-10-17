@@ -424,11 +424,11 @@
     return stroke(d, w + 10, C.roadEdge, ' opacity=".85"') + stroke(d, w, C.road) + stroke(d, w - 16, C.road2, ' opacity=".35" stroke-dasharray="26 40"') + stroke(d, 1.5, C.roadEdge, ' opacity=".35" stroke-dasharray="4 30"');
   }
   function slab(ptsArr, fill, edge) { return poly(ptsArr, edge, ' transform="translate(0,6)" opacity=".9"') + poly(ptsArr, fill); }
-  function pavilion(x0, x1, y, hh, roof, roofLit, label) {
+  function pavilion(x0, x1, y, hh, roof, roofLit, label, mids) {
     var p = '';
     p += poly([[x0 - 20, y - hh], [x1 + 20, y - hh], [x1 + 40, y - hh - 60], [x0, y - hh - 60]], roofLit) + poly([[x0 - 20, y - hh], [x1 + 20, y - hh], [x1 + 20, y - hh + 12], [x0 - 20, y - hh + 12]], roof);
     p += poly([[x0 - 20, y - hh + 12], [x1 + 20, y - hh + 12], [x1 + 20, y - hh + 20], [x0 - 20, y - hh + 20]], C.shadow, ' opacity=".12"' + mul());
-    [x0 - 10, (x0 + x1) / 2, x1 + 10].forEach(function (px) { p += rect(px - 5, y - hh + 10, 10, hh - 10, C.wallShade) + rect(px - 5, y - hh + 10, 4, hh - 10, C.wall) + pool(px - 6, y + 2, 14, 4); });
+    [x0 - 10].concat(mids || [(x0 + x1) / 2]).concat([x1 + 10]).forEach(function (px) { p += rect(px - 5, y - hh + 10, 10, hh - 10, C.wallShade) + rect(px - 5, y - hh + 10, 4, hh - 10, C.wall) + pool(px - 6, y + 2, 14, 4); });
     p += at(x0 + 4, y - hh + 6, 1, path('M0,0 c3,-9 12,-11 18,-10 c-2,8 -9,12 -18,10 z', C.cream, ' opacity=".85"'));
     return p;
   }
@@ -484,7 +484,8 @@
   function placeGroup(slug, x, y, k, cls) {
     var p = PLACE[slug]; if (!p) return '';
     seed = 7 + slug.length;
-    return '<g class="nma-place ' + (cls || '') + '" data-page="' + slug + '" transform="translate(' + x + ',' + y + ') scale(' + k + ')">' +
+    var sc = SEC[PAGE[slug].section];
+    return '<g class="nma-place ' + (cls || '') + '" data-page="' + slug + '" style="--glow:' + sc.line + ';--glow-ink:' + sc.ink + '" transform="translate(' + x + ',' + y + ') scale(' + k + ')">' +
       '<ellipse class="nma-hit" cx="0" cy="-' + (p.r * .5) + '" rx="' + (p.r + 8) + '" ry="' + (p.r * .75 + 8) + '"/>' +
       '<g class="nma-art">' + p.draw() + '</g></g>';
   }
@@ -509,9 +510,9 @@
   function h(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function head(root, eyebrow, title, sub) {
     var hd = h('header', 'nm-head'), ht = h('div');
-    ht.appendChild(h('p', 'nm-eyebrow', eyebrow));
+    if (eyebrow) ht.appendChild(h('p', 'nm-eyebrow', eyebrow));
     var t = h('h2', 'nm-title', title); t.setAttribute('data-no-toc', ''); ht.appendChild(t);
-    hd.appendChild(ht); hd.appendChild(h('p', 'nm-sub', sub));
+    hd.appendChild(ht); if (sub) hd.appendChild(h('p', 'nm-sub', sub));
     root.appendChild(hd);
   }
   function tagFor(slug, here) {
@@ -611,7 +612,6 @@
     });
     s += '</g>';
     s += '<rect class="nma-dusk" x="0" y="0" width="' + W + '" height="' + H + '"/>';
-    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
     s += '<g class="nma-litlayer" filter="url(#' + id + '-brush)"></g>';
     if (POS[here]) { var hp = POS[here]; s += beacon(hp[0], hp[1] - PLACE[here].r * 1.3 * hp[2] - 6, hereSec.ink); }
     s += '<rect class="nma-paper" x="0" y="0" width="' + W + '" height="' + H + '" filter="url(#' + id + '-grain)"/>';
@@ -620,16 +620,8 @@
     inner.innerHTML = s;
     var svg = inner.querySelector('svg');
     var places = {}; inner.querySelectorAll('.nma-place').forEach(function (gg) { places[gg.getAttribute('data-page')] = gg; });
-    var routes = svg.querySelector('.nma-routes'), light = lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
+    var light = lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
     function tagPos(slug) { var p = POS[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - (slug === here ? 64 : 20), p[1] - PLACE[slug].r * 1.1 * p[2] - (slug === here ? 50 : 0)]; }
-    function routesFrom(slug, cls) {
-      var from = POS[slug], r = '';
-      Object.keys(neighbours(slug)).forEach(function (k) {
-        var to = POS[k], mx = (from[0] + to[0]) / 2, my = Math.min(from[1], to[1]) - 50 - Math.abs(from[0] - to[0]) * .08;
-        r += '<path' + (cls ? ' class="' + cls + '"' : '') + ' d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"/>';
-      });
-      return r;
-    }
 
     var legend = h('ul', 'nma-legend'); root.appendChild(legend);
     ZONES.forEach(function (z) { var li = h('li', null, z[1]); li.style.setProperty('--s-line', SEC[z[0]].line); li.style.setProperty('--s-ink', SEC[z[0]].ink); legend.appendChild(li); });
@@ -665,7 +657,6 @@
       root.removeAttribute('data-lit');
       light.drop();
       svg.querySelectorAll('.nma-tag.nma-show').forEach(function (t) { t.classList.remove('nma-show'); });
-      routes.innerHTML = '';
     }
     function lightUp(slug) {
       if (current === slug) return;
@@ -675,15 +666,12 @@
       var shown = [slug].concat(Object.keys(neighbours(slug)));
       light.lift(shown);
       places[slug].parentNode.classList.add('nma-active');
-      routes.innerHTML = routesFrom(slug);
       layoutTags(svg, tagPos, shown);
       shown.forEach(function (k) { svg.querySelector('.nma-tag[data-for="' + k + '"]').classList.add('nma-show'); });
       fillCap(slug);
     }
     function settle() {
       clear();
-      // at rest the page you are on shows its own links, quietly
-      if (POS[here]) routes.innerHTML = routesFrom(here, 'nma-rest');
       fillCap(here);
     }
 
@@ -713,7 +701,7 @@
     root.innerHTML = '';
     var hereSec = SEC[PAGE[here].section];
     root.style.setProperty('--s-ink', hereSec.ink);
-    head(root, 'Where this page sits', 'Explore our project', 'Down the road to the left, what this page builds on. To the right, where it leads.');
+    head(root, '', 'Explore around ' + PAGE[here].name, '');
     var stage = h('div', 'nma-stage'); root.appendChild(stage);
     var scroller = h('div', 'nma-scroll'); stage.appendChild(scroller);
     var inner = h('div', 'nma-inner nma-inner--page'); scroller.appendChild(inner);
@@ -752,7 +740,6 @@
     });
     s += '</g>';
     s += '<rect class="nma-dusk" x="0" y="0" width="' + PW + '" height="' + PH + '"/>';
-    s += '<g class="nma-routes" filter="url(#' + id + '-route)"></g>';
     s += '<g class="nma-litlayer" filter="url(#' + id + '-brush)"></g>';
     var hp = POSP[here]; s += beacon(hp[0], hp[1] - PLACE[here].r * 1.3 * hp[2] - 6, hereSec.ink);
     s += '<rect class="nma-paper" x="0" y="0" width="' + PW + '" height="' + PH + '" filter="url(#' + id + '-grain)"/>';
@@ -763,17 +750,6 @@
     var places = {}; inner.querySelectorAll('.nma-place').forEach(function (gg) { places[gg.getAttribute('data-page')] = gg; });
     var light = lighting(svg, places, order, svg.querySelector('.nma-places'), svg.querySelector('.nma-litlayer'));
     layoutTags(svg, function (slug) { var p = POSP[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - (slug === here ? 66 : 18), p[1] - PLACE[slug].r * 1.1 * p[2] - (slug === here ? 50 : 0)]; }, Object.keys(POSP));
-    var routes = svg.querySelector('.nma-routes'), from = POSP[here];
-    function drawRoutes(only) {
-      var r = '';
-      links.forEach(function (l) {
-        var to = POSP[l.to];
-        if (only && only !== l.to) return;
-        var mx = (from[0] + to[0]) / 2, my = Math.min(from[1], to[1]) - 80;
-        r += '<path d="M' + from[0] + ',' + (from[1] - 6) + ' Q' + mx + ',' + my + ' ' + to[0] + ',' + (to[1] - 6) + '"' + (l.next ? ' class="nma-next"' : (only ? '' : ' class="nma-rest"')) + '/>';
-      });
-      routes.innerHTML = r;
-    }
     var rows = {};
     function tagOf(slug) { return svg.querySelector('.nma-tag[data-for="' + slug + '"]'); }
     function lit(slug, on) {
@@ -783,16 +759,13 @@
         places[slug].parentNode.classList.add('nma-active');
         tagOf(slug).classList.add('nma-show');
         if (rows[slug]) rows[slug].classList.add('nma-lit');
-        drawRoutes(slug === here ? null : slug);
       } else {
         root.removeAttribute('data-lit');
         light.drop();
         tagOf(slug).classList.remove('nma-show');
         if (rows[slug]) rows[slug].classList.remove('nma-lit');
-        drawRoutes();
-      }
+          }
     }
-    drawRoutes();
     var touch = window.matchMedia('(hover: none)').matches, viaTouch = false, armed = null;
     svg.addEventListener('pointerdown', function (e) { viaTouch = e.pointerType !== 'mouse'; }, true);
     function placeOf(t) { var a = t && t.closest ? t.closest('a') : null; var gg = a && a.querySelector('.nma-place'); return gg ? gg.getAttribute('data-page') : null; }

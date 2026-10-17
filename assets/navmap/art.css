@@ -15,17 +15,12 @@
 .nma .nma-place { cursor: pointer; }
 .nma .nma-hit { fill: transparent; }
 .nma .nma-art { transition: filter .5s cubic-bezier(.2,.7,.2,1); }
-.nma .nma-litlayer .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .7)) drop-shadow(0 0 34px rgba(141, 220, 90, .4)); }
-.nma a.nma-active .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 40px rgba(141, 220, 90, .5)); }
-.nma-page .nma-places a.nma-active .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .6)); }
-.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px rgba(141, 220, 90, .45)); }
+.nma .nma-litlayer .nma-art { filter: drop-shadow(0 0 10px var(--glow, #8ddc5a)) drop-shadow(0 0 34px color-mix(in srgb, var(--glow, #8ddc5a) 55%, transparent)); }
+.nma a.nma-active .nma-art { filter: drop-shadow(0 0 12px var(--glow, #8ddc5a)) drop-shadow(0 0 44px color-mix(in srgb, var(--glow, #8ddc5a) 70%, transparent)); }
+.nma.nma-looping .nma-litlayer .nma-art { filter: drop-shadow(0 0 12px #ffd36b) drop-shadow(0 0 44px rgba(220, 171, 59, .7)); }
+.nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--glow, #8ddc5a) 55%, transparent)); }
 
 /* the lit routes between a place and its neighbours */
-.nma .nma-routes path { fill: none; stroke: #8ddc5a; stroke-width: 6; stroke-linecap: round; opacity: .9; stroke-dasharray: 1 16; animation: nma-walk 2.4s linear infinite; }
-.nma .nma-routes path.nma-next { stroke-dasharray: none; stroke-width: 6; opacity: .8; }
-.nma .nma-routes path.nma-rest { stroke: #fff; stroke-width: 3.5; opacity: .5; stroke-dasharray: 2 12; animation: none; }
-.nma-page .nma-routes path.nma-rest { stroke: #8ddc5a; opacity: .55; stroke-width: 4; stroke-dasharray: 1 14; animation: nma-walk 2.4s linear infinite; }
-@keyframes nma-walk { to { stroke-dashoffset: -34; } }
 
 /* the name tags */
 .nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .35s cubic-bezier(.2,.7,.2,1); }
@@ -57,9 +52,6 @@
   .nma .nma-scroll::-webkit-scrollbar { display: none; }
   .nma .nma-inner { width: 1100px; }
   .nma .nma-inner--page { width: 1000px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .nma .nma-routes path { animation: none; }
 }
 
 /* the legend of zones under the valley, and the two lanes under the page road */
@@ -93,15 +85,4 @@
 .nma .nma-inner--scene { position: relative; }
 .nma .nma-lanes--scene { grid-template-columns: 1fr auto 1fr; }
 .nma .nma-lanecol--peer { min-width: 200px; }
-.nma .nma-routes path.nma-near { opacity: .8; }
-.nma .nma-routes path.nma-hot { stroke: #8ddc5a; stroke-width: 6; opacity: .95; stroke-dasharray: 1 16; animation: nma-walk 2.4s linear infinite; }
-.nma .nma-routes path.nma-peer { stroke: #fff; stroke-width: 3; opacity: .55; stroke-dasharray: 2 10; animation: none; }
-.nma .nma-routes path.nma-loop { stroke: #dcab3b; stroke-width: 5; stroke-dasharray: 2 14; opacity: .75; animation: nma-walk-back 3s linear infinite; }
-.nma .nma-routes path.nma-loop.nma-hot { stroke: #ffd36b; stroke-width: 6; opacity: 1; }
-.nma .nma-routes path.nma-loop__head { stroke: #dcab3b; stroke-width: 5; stroke-dasharray: none; animation: none; opacity: .85; }
-.nma .nma-routes path.nma-loop__head.nma-hot { stroke: #ffd36b; }
-@keyframes nma-walk-back { to { stroke-dashoffset: 32; } }
-.nma .nm-loop { background: #fdf1c9; color: #845c0f; }
-.nma a.nma-lit .nm-loop, .nma a:hover .nm-loop { background: #845c0f; color: #fff; }
 @media (max-width: 760px) { .nma .nma-inner--scene { width: 1100px; } .nma .nma-lanes--scene { grid-template-columns: 1fr; } }
-@media (prefers-reduced-motion: reduce) { .nma .nma-routes path.nma-loop, .nma .nma-routes path.nma-hot { animation: none; } }
