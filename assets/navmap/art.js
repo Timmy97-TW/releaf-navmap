@@ -75,6 +75,16 @@
   var seed = 7;
   function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
   function jitter(a, k) { return a.map(function (p) { return [p[0] + (rnd() - 0.5) * k, p[1] + (rnd() - 0.5) * k]; }); }
+  // a closed shape whose top edge runs smoothly through the points (Catmull-Rom as cubics); the first and last points are the base corners
+  function ridge(a, fill, extra) {
+    var d = 'M' + r1(a[0][0]) + ',' + r1(a[0][1]) + ' L' + r1(a[1][0]) + ',' + r1(a[1][1]);
+    for (var i = 1; i < a.length - 2; i++) {
+      var p0 = a[i - 1], p1 = a[i], p2 = a[i + 1], p3 = a[i + 2];
+      d += ' C' + r1(p1[0] + (p2[0] - p0[0]) / 6) + ',' + r1(p1[1] + (p2[1] - p0[1]) / 6) + ' ' + r1(p2[0] - (p3[0] - p1[0]) / 6) + ',' + r1(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + r1(p2[0]) + ',' + r1(p2[1]);
+    }
+    d += ' L' + r1(a[a.length - 1][0]) + ',' + r1(a[a.length - 1][1]) + ' Z';
+    return path(d, fill, extra);
+  }
   // a box seen from the front and a little from the right, the lit side on the right
   function prism(x, y, w, h, d, front, side, top) {
     return poly([[x, y], [x + w, y], [x + w, y - h], [x, y - h]], front) +
@@ -124,14 +134,6 @@
     return at(x, y, s, rect(-8, -22, 16, 22, C.glass, 2) + rect(-8, -11, 16, 11, col, 1) + rect(4, -21, 3, 20, C.glassLit, 1, ' opacity=".7"') + rect(-9, -23, 18, 3, C.glassShade, 1));
   }
   function pot(x, y, s) { s = s || 1; return at(x, y, s, path('M-7,0 l-2,-12 h18 l-2,12 z', C.roof) + rect(-10, -14, 20, 3, C.roofLit, 1) + path('M0,-13 c-6,-6 -10,-14 -4,-20 c4,6 4,12 4,20 c0,-10 2,-18 8,-20 c2,8 -2,16 -8,20 z', C.leaf)); }
-  function signpost(x, y, s, w, lines, face) {
-    s = s || 1; w = w || 120; var h = 16 + lines.length * 16;
-    var t = '';
-    lines.forEach(function (l, i) { t += '<text x="0" y="' + (-h + 22 + i * 16) + '" text-anchor="middle" class="nma-sign">' + esc(l) + '</text>'; });
-    return at(x, y, s, pool(-4, 1, w / 3, 4, .14) + rect(-3.5, -h - 4, 7, h + 4, C.woodShade) + rect(-3.5, -h - 4, 3, h + 4, C.wood) +
-      rect(-w / 2 - 2, -h - 8, w + 4, h + 2, C.woodShade, 4) + rect(-w / 2, -h - 10, w, h, face || C.paper, 4) + rect(-w / 2, -h - 10, w, 3, C.paperShade, 1) +
-      circ(-w / 2 + 7, -h - 3, 1.6, C.woodShade) + circ(w / 2 - 7, -h - 3, 1.6, C.woodShade) + t);
-  }
   function fence(x, y, n, gap) { var s = ''; for (var i = 0; i < n; i++) s += rect(x + i * gap, y - 16, 4, 16, C.wood, 1) + rect(x + i * gap, y - 16, 1.5, 16, C.woodLit); s += rect(x - 2, y - 12, (n - 1) * gap + 8, 2.5, C.woodShade) + rect(x - 2, y - 6, (n - 1) * gap + 8, 2.5, C.woodShade); return s; }
   function hay(x, y, s) { s = s || 1; return at(x, y, s, pool(-4, 1, 14, 4) + ell(0, -8, 13, 9, C.ochre) + ell(2, -10, 9, 6, C.ochre2) + stroke('M-10,-6 q10,-3 20,0', 1.5, C.goldShade)); }
 
@@ -157,8 +159,8 @@
   PLACE.description = { r: 74, draw: function () {
     return cast(120, 70, .16) + rect(-52, -72, 7, 72, C.woodShade) + rect(-52, -72, 3, 72, C.woodLit) + rect(45, -72, 7, 72, C.woodShade) + rect(45, -72, 3, 72, C.woodLit) +
       rect(-64, -82, 128, 50, C.greenDeep, 7) + rect(-60, -78, 120, 42, C.green, 5) + rect(-60, -78, 120, 4, C.leaf, 2, ' opacity=".5"') +
-      path('M-44,-50 c6,-20 24,-24 36,-22 c-4,16 -18,26 -36,22 z', C.leafLit) + stroke('M-42,-46 L-16,-66', 2, C.greenDeep) +
-      '<text x="14" y="-50" text-anchor="middle" class="nma-sign nma-sign--big">ReLEAF</text>' +
+      path('M-18,-44 c8,-28 34,-34 52,-30 c-6,22 -26,36 -52,30 z', C.leafLit) + path('M-18,-44 c8,-28 34,-34 52,-30 c-20,2 -36,12 -52,30 z', C.leaf) + stroke('M-14,-46 L30,-70', 2.5, C.greenDeep) +
+      stroke('M-46,-62 h18 M-46,-52 h14', 3, C.leaf, ' opacity=".55"') +
       pot(-72, 0, 1) + pot(72, 0, 1) + bush(-90, 8, .8) + tree(92, 2, .7, 1);
   } };
   PLACE.biomanufacturing = { r: 92, draw: function () {
@@ -185,7 +187,7 @@
     var f = cast(130, 80, .18);
     [[-60, 0, 32, 16], [-30, -16, 32, 34], [0, -34, 32, 52], [30, -52, 32, 70]].forEach(function (s, i) {
       f += prism(s[0], s[1], s[2], s[3], 10, i % 2 ? C.ochre : C.ochre2, C.goldShade, C.cream) + rect(s[0], s[1] - s[3], s[2], 3, C.white, 1, ' opacity=".5"');
-      f += '<text x="' + (s[0] + 16) + '" y="' + (s[1] - 5) + '" text-anchor="middle" class="nma-sign nma-sign--step">' + (i + 1) + '</text>';
+      for (var d = 0; d <= i; d++) f += circ(s[0] + 16 + (d - i / 2) * 7, s[1] - 7, 2.2, C.goldShade);
     });
     f += rect(44, -126, 3.5, 56, C.woodShade) + rect(44, -126, 1.5, 56, C.woodLit) + poly([[47.5, -126], [74, -117], [47.5, -108]], C.leaf) + poly([[47.5, -117], [74, -117], [47.5, -108]], C.green);
     return f + person(-44, 0, .8, C.shirtB) + person(16, -34, .8, C.shirtR, false, true) + bush(-78, 6, .7);
@@ -195,8 +197,7 @@
       path('M-34,-32 l6,-18 h56 l6,18 z', C.roofShade) + path('M-30,-33 l5,-15 h50 l5,15 z', C.roof) + rect(-9, -39, 18, 6, C.woodShade, 2) + rect(-9, -39, 18, 2, C.woodLit, 1) +
       line([[-18, -33], [-18, -58]], 4.5, C.metalShade) + rect(-25, -66, 14, 10, C.metalShade, 2) + rect(-25, -66, 14, 3, C.metalLit, 1) +
       line([[2, -33], [11, -56]], 4.5, C.woodShade) + poly([[7, -54], [20, -62], [18, -52]], C.metal) +
-      circ(24, -42, 7.5, C.gold) + circ(24, -42, 3.2, C.roofShade) + rect(-30, -22, 20, 8, C.gold, 1) + rect(8, -20, 24, 6, C.leaf, 1) + rect(-28, -12, 14, 5, C.blue, 1) +
-      '<text x="0" y="-8" text-anchor="middle" class="nma-sign nma-sign--white">OPEN</text>';
+      circ(24, -42, 7.5, C.gold) + circ(24, -42, 3.2, C.roofShade) + rect(-30, -22, 20, 8, C.gold, 1) + rect(8, -20, 24, 6, C.leaf, 1) + rect(-28, -12, 14, 5, C.blue, 1) + circ(14, -10, 3.5, C.cream) + circ(24, -10, 3.5, C.cream);
   } };
   PLACE.results = { r: 56, draw: function () {
     var f = cast(84, 90, .16) + rect(-31, -62, 5, 62, C.woodShade) + rect(-31, -62, 2, 62, C.woodLit) + rect(26, -62, 5, 62, C.woodShade) + rect(26, -62, 2, 62, C.woodLit) +
@@ -255,7 +256,7 @@
       rect(-42, -104, 84, 58, C.woodShade, 3) + rect(-39, -101, 78, 52, C.paper, 2) + rect(-39, -101, 78, 3, C.paperShade, 1) +
       stroke('M-34,-54 C-18,-54 -14,-94 0,-94 C14,-94 18,-54 34,-54', 3.5, C.greenDeep) + line([[-34, -54], [34, -54]], 1.5, C.ink2) + line([[0, -94], [0, -54]], 1, C.ink2, ' stroke-dasharray="3 3"') +
       stroke('M-34,-72 C-18,-72 -14,-84 0,-78 C14,-72 20,-60 34,-64', 2.5, C.gold) + circ(-14, -86, 2.2, C.red) + circ(14, -86, 2.2, C.red) + circ(0, -94, 2.6, C.red) +
-      '<text x="-30" y="-58" class="nma-sign nma-sign--tiny">t</text>' + pot(-40, 2, .8);
+      pot(-40, 2, .8);
   } };
   PLACE.hardware = { r: 70, draw: function () {
     return cast(90, 110, .2) + prism(-34, 0, 68, 92, 12, C.greenDeep, '#2b5a2e', C.green) + rect(-30, -88, 60, 84, C.green, 4) + rect(-30, -88, 60, 3, C.leaf, 1, ' opacity=".3"') +
@@ -308,7 +309,7 @@
     for (var i = 0; i < 6; i++) f += path('M' + (-60 + i * 20) + ',-98 h20 q-10,11 -20,0 z', i % 2 ? C.white : C.red);
     f += rect(-42, -60, 14, 22, C.liquid, 2) + rect(-24, -62, 14, 24, C.liquid, 2) + rect(-6, -60, 14, 22, C.liquid, 2) + rect(-38, -59, 3, 20, C.glassLit, 1, ' opacity=".6"') + rect(-20, -61, 3, 22, C.glassLit, 1, ' opacity=".6"') + rect(-2, -59, 3, 20, C.glassLit, 1, ' opacity=".6"') +
       rect(12, -54, 28, 16, C.ochre, 2) + rect(12, -54, 28, 3, C.ochre2, 1) + circ(26, -60, 7, C.leaf) + circ(22, -62, 3, C.leafLit) +
-      rect(-58, -72, 24, 15, C.paper, 2) + '<text x="-46" y="-61" text-anchor="middle" class="nma-sign nma-sign--tiny">$ / L</text>' + person(70, 6, .82, C.shirtB, true, true) + person(-74, 8, .78, C.shirtR, true);
+      rect(-58, -72, 24, 15, C.paper, 2) + circ(-50, -64, 4, C.gold) + stroke('M-42,-62 h6', 2, C.ink2) + person(70, 6, .82, C.shirtB, true, true) + person(-74, 8, .78, C.shirtR, true);
     return f;
   } };
   PLACE.sustainability = { r: 66, draw: function () {
@@ -367,11 +368,11 @@
       '<linearGradient id="' + id + '-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + C.plainLight + '"/><stop offset=".5" stop-color="' + C.plain + '"/><stop offset="1" stop-color="' + C.plainDeep + '"/></linearGradient>' +
       '<linearGradient id="' + id + '-mist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + C.mist + '" stop-opacity="0"/><stop offset="1" stop-color="' + C.mist + '" stop-opacity=".75"/></linearGradient>' +
       '<radialGradient id="' + id + '-vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#1c2416" stop-opacity=".22"/></radialGradient>' +
-      '<filter id="' + id + '-brush" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4.5" xChannelSelector="R" yChannelSelector="G"/></filter>' +
-      '<filter id="' + id + '-brushsoft" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>' +
+      '<filter id="' + id + '-brush" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>' +
+      '<filter id="' + id + '-brushsoft" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>' +
       '<filter id="' + id + '-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".09"/></feComponentTransfer></filter>' +
       '<filter id="' + id + '-strokes" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".002 .06" numOctaves="1" seed="5" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".12" intercept="-.02"/></feComponentTransfer></filter>' +
-      '<filter id="' + id + '-route" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '<filter id="' + id + '-route" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
       '</defs>';
   }
 
@@ -379,19 +380,19 @@
     amp = amp || 1;
     var s = '', x, i, a, b;
     var far = [[0, horizon + 20]]; for (x = 0; x <= w; x += 160) far.push([x, horizon - amp * (70 + 70 * Math.abs(Math.sin(x / 230 + 1)) + 30 * Math.sin(x / 90))]); far.push([w, horizon + 20]);
-    s += poly(jitter(far, 6), C.mtFar);
+    s += ridge(far, C.mtFar);
     var far2 = [[0, horizon + 20]]; for (x = 0; x <= w; x += 140) far2.push([x, horizon - amp * (50 + 60 * Math.abs(Math.sin(x / 260 + 2.6)) + 24 * Math.sin(x / 110 + 1))]); far2.push([w, horizon + 20]);
-    s += poly(jitter(far2, 6), C.mtFar2);
+    s += ridge(far2, C.mtFar2);
     s += rect(0, horizon - amp * 120, w, amp * 140, mist);
     var mid = [[0, horizon + 20]]; for (x = 0; x <= w; x += 120) mid.push([x, horizon - amp * (30 + 120 * Math.abs(Math.sin(x / 310 + 2.4)) + 40 * Math.abs(Math.sin(x / 130)))]); mid.push([w, horizon + 20]);
-    s += poly(jitter(mid, 8), C.mtMid);
-    for (i = 1; i < mid.length - 2; i += 2) { a = mid[i]; b = mid[i + 1]; if (b[1] < a[1]) s += poly([[a[0], a[1] + 40], [b[0], b[1]], [b[0] + 40, b[1] + 50]], C.mtMid2, ' opacity=".9"'); }
+    s += ridge(mid, C.mtMid);
+    for (i = 1; i < mid.length - 2; i += 2) { a = mid[i]; b = mid[i + 1]; if (b[1] < a[1]) s += path('M' + a[0] + ',' + (a[1] + 40) + ' Q' + (b[0] - 20) + ',' + (b[1] + 10) + ' ' + b[0] + ',' + b[1] + ' Q' + (b[0] + 30) + ',' + (b[1] + 30) + ' ' + (b[0] + 40) + ',' + (b[1] + 50) + ' Z', C.mtMid2, ' opacity=".85"'); }
     s += rect(0, horizon - amp * 60, w, amp * 80, mist);
     var near = [[0, horizon + 40]]; for (x = 0; x <= w; x += 100) near.push([x, horizon - amp * (90 * Math.abs(Math.sin(x / 420 + 0.6)) + 50 * Math.abs(Math.sin(x / 170 + 1)))]); near.push([w, horizon + 40]);
-    s += poly(jitter(near, 8), C.mtNear);
+    s += ridge(near, C.mtNear);
     for (i = 1; i < near.length - 2; i += 2) {
       a = near[i]; b = near[i + 1];
-      if (b[1] < a[1]) s += poly([[a[0] - 10, a[1] + 30], [b[0], b[1]], [b[0] + 36, b[1] + 60], [b[0] + 10, b[1] + 70]], C.mtNearLit, ' opacity=".85"') + poly([[b[0], b[1]], [b[0] + 36, b[1] + 60], [b[0] + 22, b[1] + 40]], C.mtNearLit2, ' opacity=".6"');
+      if (b[1] < a[1]) s += path('M' + (a[0] - 10) + ',' + (a[1] + 30) + ' Q' + (b[0] - 30) + ',' + (b[1] + 10) + ' ' + b[0] + ',' + b[1] + ' Q' + (b[0] + 30) + ',' + (b[1] + 40) + ' ' + (b[0] + 36) + ',' + (b[1] + 60) + ' L' + (b[0] + 10) + ',' + (b[1] + 70) + ' Z', C.mtNearLit, ' opacity=".8"') + path('M' + b[0] + ',' + b[1] + ' Q' + (b[0] + 24) + ',' + (b[1] + 30) + ' ' + (b[0] + 36) + ',' + (b[1] + 60) + ' L' + (b[0] + 22) + ',' + (b[1] + 40) + ' Z', C.mtNearLit2, ' opacity=".55"');
     }
     s += path('M0,' + (horizon + 20) + ' C300,' + (horizon - 40 * amp) + ' 700,' + (horizon + 10) + ' 1000,' + (horizon + 30) + ' S1800,' + (horizon - 20 * amp) + ' 2400,' + (horizon + 30) + ' V' + (horizon + 60) + ' H0 Z', C.ridge);
     s += path('M0,' + (horizon + 20) + ' C300,' + (horizon - 40 * amp) + ' 700,' + (horizon + 10) + ' 1000,' + (horizon + 30) + ' V' + (horizon + 60) + ' H0 Z', C.ridgeLit, ' opacity=".5"');
@@ -428,7 +429,7 @@
     p += poly([[x0 - 20, y - hh], [x1 + 20, y - hh], [x1 + 40, y - hh - 60], [x0, y - hh - 60]], roofLit) + poly([[x0 - 20, y - hh], [x1 + 20, y - hh], [x1 + 20, y - hh + 12], [x0 - 20, y - hh + 12]], roof);
     p += poly([[x0 - 20, y - hh + 12], [x1 + 20, y - hh + 12], [x1 + 20, y - hh + 20], [x0 - 20, y - hh + 20]], C.shadow, ' opacity=".12"' + mul());
     [x0 - 10, (x0 + x1) / 2, x1 + 10].forEach(function (px) { p += rect(px - 5, y - hh + 10, 10, hh - 10, C.wallShade) + rect(px - 5, y - hh + 10, 4, hh - 10, C.wall) + pool(px - 6, y + 2, 14, 4); });
-    p += '<text x="' + (x0 - 8) + '" y="' + (y - hh + 3) + '" text-anchor="start" class="nma-sign nma-sign--roof">' + esc(label) + '</text>';
+    p += at(x0 + 4, y - hh + 6, 1, path('M0,0 c3,-9 12,-11 18,-10 c-2,8 -9,12 -18,10 z', C.cream, ' opacity=".85"'));
     return p;
   }
 
@@ -562,8 +563,7 @@
     s += '<g class="nma-zones">';
     ZONES.forEach(function (z) {
       var sec = SEC[z[0]], cx = (z[2] + z[3]) / 2;
-      s += '<text class="nma-zone" x="' + cx + '" y="1170" text-anchor="middle" fill="' + sec.ink + '">' + esc(z[1]) + '</text>' +
-        '<line x1="' + (z[2] + 10) + '" y1="1183" x2="' + (z[3] - 10) + '" y2="1183" stroke="' + sec.line + '" stroke-width="3" stroke-linecap="round" opacity=".75"/>';
+      s += '<line x1="' + (z[2] + 10) + '" y1="1180" x2="' + (z[3] - 10) + '" y2="1180" stroke="' + sec.line + '" stroke-width="4" stroke-linecap="round" opacity=".7"/>';
     });
     s += '</g><g class="nma-routes" filter="url(#' + id + '-route)"></g>';
     var order = ORDER.slice().sort(function (a, b) { return POS[a][1] - POS[b][1]; });
@@ -582,6 +582,8 @@
     var routes = svg.querySelector('.nma-routes');
     function tagPos(slug) { var p = POS[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - 20, p[1] - PLACE[slug].r * 1.1 * p[2]]; }
 
+    var legend = h('ul', 'nma-legend'); root.appendChild(legend);
+    ZONES.forEach(function (z) { var li = h('li', null, z[1]); li.style.setProperty('--s-line', SEC[z[0]].line); li.style.setProperty('--s-ink', SEC[z[0]].ink); legend.appendChild(li); });
     var cap = h('div', 'nma-cap'); root.appendChild(cap);
     function fillCap(slug) {
       cap.innerHTML = '';
@@ -670,6 +672,8 @@
     s += path('M0,300 C400,280 900,320 1300,300 S2000,280 2400,310 V720 H0 Z', 'url(#' + id + '-ground)') + path('M0,540 C500,520 1000,560 1500,540 S2100,530 2400,550 V720 H0 Z', C.plain2, ' opacity=".5"') + rect(0, 300, PW, PH - 300, '#fff', ' filter="url(#' + id + '-strokes)" opacity=".9"');
     s += roadPath('M-20,' + (GY + 50) + ' C400,' + (GY + 70) + ' 800,' + GY + ' 1200,' + (GY + 20) + ' S2000,' + (GY + 70) + ' 2420,' + (GY + 40), 40);
     s += ell(1200, GY + 96, 250, 40, C.pave2, ' opacity=".9"') + ell(1200, GY + 92, 240, 34, C.pave);
+    for (var cx = 860; cx > 120; cx -= 160) s += stroke('M' + (cx + 14) + ',' + (GY + 44) + ' l-14,10 l14,10', 4, C.white, ' opacity=".55"');
+    for (cx = 1540; cx < 2300; cx += 160) s += stroke('M' + (cx - 14) + ',' + (GY + 44) + ' l14,10 l-14,10', 4, C.white, ' opacity=".55"');
     s += flowers(40, 600, 500, 90, C.gold, 30) + flowers(1860, 600, 500, 90, C.white, 30);
     [[60, 690], [2340, 700], [1200, 350], [700, 700], [1700, 706]].forEach(function (p) { s += tree(p[0], p[1], 1.05 + (p[0] % 3) * .1, (p[0] >> 4) % 3); });
     s += bush(300, 680, .9) + bush(2080, 690, .9) + hay(2260, 640, 1) + tuft(500, 700) + tuft(1900, 710);
@@ -689,30 +693,17 @@
     s += '<g class="nma-places" filter="url(#' + id + '-brush)">';
     order.forEach(function (slug) {
       var p = POSP[slug];
-      if (slug === here) s += '<g aria-current="page">' + placeGroup(slug, p[0], p[1], p[2], 'nma-is-here nma-lit') + '</g>';
+      if (slug === here) s += '<a aria-current="page" tabindex="0" aria-label="' + esc(PAGE[slug].name) + ', you are here">' + placeGroup(slug, p[0], p[1], p[2], 'nma-is-here nma-lit') + '</a>';
       else s += '<a href="' + c.href(slug) + '" aria-label="' + esc(PAGE[slug].name) + '">' + placeGroup(slug, p[0], p[1], p[2], 'nma-lit') + '</a>';
-    });
-    s += '</g>';
-    s += '<g class="nma-signs" filter="url(#' + id + '-brush)">';
-    links.forEach(function (l) {
-      var p = POSP[l.to], words = l.why.split(' '), lines = [], cur = '';
-      words.forEach(function (w) { if ((cur + ' ' + w).trim().length > 19) { lines.push(cur.trim()); cur = w; } else cur += ' ' + w; }); lines.push(cur.trim());
-      lines[0] = lines[0].charAt(0).toUpperCase() + lines[0].slice(1);
-      var wmax = Math.max.apply(null, lines.map(function (t) { return t.length; }));
-      s += signpost(p[0], p[1] + 124, 1.4, Math.max(100, wmax * 7.4 + 22), lines, l.next ? '#fff3c9' : C.paper);
     });
     s += '</g>';
     s += '<rect class="nma-paper" x="0" y="0" width="' + PW + '" height="' + PH + '" filter="url(#' + id + '-grain)"/>';
     s += '<g class="nma-tags">'; Object.keys(POSP).forEach(function (slug) { s += tagFor(slug, here); }); s += '</g>';
-    s += '<g class="nma-lanes"><text class="nma-lane" x="560" y="186" text-anchor="middle">Builds on</text><text class="nma-lane" x="1840" y="186" text-anchor="middle">Leads to</text>' +
-      '<path d="M720,178 h80" class="nma-lane__arrow"/><path d="M720,178 l10,-7 m-10,7 l10,7" class="nma-lane__arrow"/>' +
-      '<path d="M1600,178 h80" class="nma-lane__arrow"/><path d="M1680,178 l-10,-7 m10,7 l-10,7" class="nma-lane__arrow"/></g>';
     s += '</svg>';
     inner.innerHTML = s;
     var svg = inner.querySelector('svg');
     var places = {}; inner.querySelectorAll('.nma-place').forEach(function (gg) { places[gg.getAttribute('data-page')] = gg; });
     layoutTags(svg, function (slug) { var p = POSP[slug]; return [p[0], p[1] - PLACE[slug].r * 1.35 * p[2] - 18, p[1] - PLACE[slug].r * 1.1 * p[2]]; }, Object.keys(POSP));
-    Object.keys(POSP).forEach(function (slug) { svg.querySelector('.nma-tag[data-for="' + slug + '"]').classList.add('nma-show'); });
     var routes = svg.querySelector('.nma-routes'), from = POSP[here];
     function drawRoutes(only) {
       var r = '';
@@ -725,13 +716,46 @@
       routes.innerHTML = r;
     }
     drawRoutes();
+    var rows = {};
+    function tagOf(slug) { return svg.querySelector('.nma-tag[data-for="' + slug + '"]'); }
+    function lit(slug, on) {
+      if (on) { root.setAttribute('data-lit', slug); places[slug].classList.add('nma-active'); tagOf(slug).classList.add('nma-show'); if (rows[slug]) rows[slug].classList.add('nma-lit'); drawRoutes(slug); }
+      else { root.removeAttribute('data-lit'); places[slug].classList.remove('nma-active'); tagOf(slug).classList.remove('nma-show'); if (rows[slug]) rows[slug].classList.remove('nma-lit'); drawRoutes(); }
+    }
     Object.keys(places).forEach(function (slug) {
-      if (slug === here) return;
       var a = places[slug].parentNode;
-      a.addEventListener('mouseenter', function () { root.setAttribute('data-lit', slug); places[slug].classList.add('nma-active'); drawRoutes(slug); });
-      a.addEventListener('mouseleave', function () { root.removeAttribute('data-lit'); places[slug].classList.remove('nma-active'); drawRoutes(); });
-      a.addEventListener('click', function (e) { if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); } });
+      a.addEventListener('mouseenter', function () { lit(slug, true); });
+      a.addEventListener('mouseleave', function () { lit(slug, false); });
+      a.addEventListener('focus', function () { lit(slug, true); });
+      a.addEventListener('blur', function () { lit(slug, false); });
+      a.addEventListener('click', function (e) { if (slug === here) { e.preventDefault(); return; } if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: slug, bubbles: true })); } });
     });
+    var cap = h('div', 'nma-cap nma-cap--page'); root.appendChild(cap);
+    var hd = h('div', 'nma-cap__head');
+    hd.appendChild(h('span', 'nma-cap__eyebrow', 'You are here · ' + SEC[PAGE[here].section].name));
+    hd.appendChild(h('span', 'nma-cap__name', PAGE[here].name));
+    hd.appendChild(h('span', 'nma-cap__line', PAGE[here].caption));
+    cap.appendChild(hd);
+    var lanesEl = h('div', 'nma-lanes');
+    [['in', 'Builds on', ins], ['out', 'Leads to', outs]].forEach(function (L) {
+      var col = h('div', 'nma-lanecol nma-lanecol--' + L[0]);
+      var hh = h('h4', null, L[1]); hh.setAttribute('data-no-toc', ''); col.appendChild(hh);
+      var ul = h('ul', 'nma-cap__links');
+      L[2].forEach(function (l) {
+        var li = h('li'); var a = h('a'); a.href = c.href(l.to);
+        var ls = SEC[PAGE[l.to].section]; a.style.setProperty('--s-ink', ls.ink); a.style.setProperty('--s-pill', ls.pill);
+        a.appendChild(h('b', null, PAGE[l.to].name));
+        a.appendChild(h('span', null, l.why));
+        if (l.next) a.appendChild(h('i', 'nm-next', 'Read next'));
+        a.addEventListener('mouseenter', function () { lit(l.to, true); });
+        a.addEventListener('mouseleave', function () { lit(l.to, false); });
+        a.addEventListener('click', function (e) { if (c.local) { e.preventDefault(); root.dispatchEvent(new CustomEvent('navmap:go', { detail: l.to, bubbles: true })); } });
+        rows[l.to] = a;
+        li.appendChild(a); ul.appendChild(li);
+      });
+      col.appendChild(ul); lanesEl.appendChild(col);
+    });
+    cap.appendChild(lanesEl);
     if (scroller.scrollWidth > scroller.clientWidth + 4) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
   }
 

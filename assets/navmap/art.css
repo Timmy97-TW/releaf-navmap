@@ -6,27 +6,27 @@
 .nma .nma-svg a { outline: none; }
 
 /* the ground, and the dusk that falls on it when a place is lit */
-.nma .nma-ground { transition: filter .45s ease; }
-.nma .nma-dusk { fill: #1b2a3c; opacity: 0; pointer-events: none; mix-blend-mode: multiply; transition: opacity .45s ease; }
-.nma[data-lit] .nma-dusk { opacity: .5; }
+.nma .nma-ground { transition: filter .6s cubic-bezier(.2,.7,.2,1); }
+.nma .nma-dusk { fill: #1b2a3c; opacity: 0; pointer-events: none; mix-blend-mode: multiply; transition: opacity .6s cubic-bezier(.2,.7,.2,1); }
+.nma[data-lit] .nma-dusk { opacity: .42; }
 .nma .nma-paper { fill: #000; pointer-events: none; }
 
 /* the places */
-.nma .nma-place { cursor: pointer; transition: filter .45s ease, opacity .45s ease; }
+.nma .nma-place { cursor: pointer; transition: filter .6s cubic-bezier(.2,.7,.2,1), opacity .6s cubic-bezier(.2,.7,.2,1); }
 .nma .nma-hit { fill: transparent; }
-.nma .nma-art { transition: filter .3s ease; transform-box: fill-box; transform-origin: 50% 100%; }
-.nma[data-lit] .nma-place:not(.nma-lit) { filter: brightness(.55) saturate(.5); }
-.nma[data-lit] .nma-place.nma-lit .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 30px rgba(141, 220, 90, .5)); }
-.nma .nma-place.nma-active .nma-art, .nma .nma-place:hover .nma-art { filter: drop-shadow(0 0 16px rgba(141, 220, 90, .95)) drop-shadow(0 0 36px rgba(141, 220, 90, .6)); }
+.nma .nma-art { transition: filter .5s cubic-bezier(.2,.7,.2,1); transform-box: fill-box; transform-origin: 50% 100%; }
+.nma[data-lit] .nma-place:not(.nma-lit) { filter: brightness(.62) saturate(.55); }
+.nma[data-lit] .nma-place.nma-lit .nma-art { filter: drop-shadow(0 0 12px rgba(141, 220, 90, .7)) drop-shadow(0 0 34px rgba(141, 220, 90, .4)); }
+.nma .nma-place.nma-active .nma-art, .nma .nma-place:hover .nma-art { filter: drop-shadow(0 0 14px rgba(141, 220, 90, .85)) drop-shadow(0 0 40px rgba(141, 220, 90, .5)); }
 .nma .nma-place.nma-is-here .nma-art { filter: drop-shadow(0 0 10px rgba(141, 220, 90, .55)); }
 
 /* the lit routes between a place and its neighbours */
-.nma .nma-routes path { fill: none; stroke: #8ddc5a; stroke-width: 7; stroke-linecap: round; opacity: .95; stroke-dasharray: 1 14; animation: nma-walk 1.6s linear infinite; }
+.nma .nma-routes path { fill: none; stroke: #8ddc5a; stroke-width: 6; stroke-linecap: round; opacity: .9; stroke-dasharray: 1 16; animation: nma-walk 2.4s linear infinite; }
 .nma .nma-routes path.nma-next { stroke-dasharray: none; stroke-width: 6; opacity: .8; }
-@keyframes nma-walk { to { stroke-dashoffset: -30; } }
+@keyframes nma-walk { to { stroke-dashoffset: -34; } }
 
 /* the name tags */
-.nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.nma .nma-tag { opacity: 0; pointer-events: none; transition: opacity .35s cubic-bezier(.2,.7,.2,1); }
 .nma .nma-tag.nma-show { opacity: 1; }
 .nma .nma-tag__bg { fill: rgba(23, 23, 23, .88); }
 .nma .nma-tag__pin { stroke: rgba(23, 23, 23, .6); stroke-width: 1.5; stroke-dasharray: 3 3; }
@@ -36,15 +36,6 @@
 .nma-page .nma-tag__t { fill: var(--s-ink, #171717); font-size: 24px; }
 
 /* text painted into the picture */
-.nma .nma-zone { font-size: 24px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
-.nma .nma-sign { font-size: 14px; font-weight: 600; fill: #2b2b2b; }
-.nma .nma-sign--big { font-size: 26px; font-weight: 700; fill: #f6f3e8; letter-spacing: .04em; }
-.nma .nma-sign--tiny { font-size: 12px; fill: #6f5430; }
-.nma .nma-sign--step { font-size: 12px; font-weight: 700; fill: #6f5430; }
-.nma .nma-sign--white { font-size: 11px; font-weight: 700; fill: #f7f3e6; letter-spacing: .1em; }
-.nma .nma-sign--roof { font-size: 22px; font-weight: 700; fill: #f7f3e6; letter-spacing: .18em; opacity: .9; }
-.nma .nma-lane { font-size: 30px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; fill: #ffffff; opacity: .92; }
-.nma .nma-lane__arrow { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; opacity: .9; }
 
 /* the caption under the valley */
 .nma .nma-cap { display: grid; gap: 10px; margin: 18px 2px 0; min-height: 120px; }
@@ -57,7 +48,7 @@
 .nma .nma-cap__links a:hover { background: var(--s-pill, #f5f5f5); }
 .nma .nma-cap__links b { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .nma .nma-cap__links span { font-size: 12.5px; color: #6b6b6b; }
-.nma .nma-cap__links i { font-style: normal; }
+.nma .nma-cap__links i { font-style: normal; justify-self: start; }
 
 @media (max-width: 760px) {
   .nma .nma-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; margin: 0 calc(-1 * var(--nm-pad, 20px)); border-radius: 0; }
@@ -68,3 +59,14 @@
 @media (prefers-reduced-motion: reduce) {
   .nma .nma-routes path { animation: none; }
 }
+
+/* the legend of zones under the valley, and the two lanes under the page road */
+.nma .nma-legend { list-style: none; margin: 14px 2px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.nma .nma-legend li { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--s-ink); }
+.nma .nma-legend li::before { content: ""; width: 22px; height: 4px; border-radius: 2px; background: var(--s-line); }
+.nma .nma-cap--page { min-height: 0; }
+.nma .nma-lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; }
+.nma .nma-lanecol h4 { margin: 4px 0 6px; font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6b6b6b; }
+.nma .nma-lanes .nma-cap__links { grid-template-columns: 1fr; margin: 0; }
+.nma .nma-cap__links a.nma-lit { background: var(--s-pill, #f5f5f5); }
+@media (max-width: 640px) { .nma .nma-lanes { grid-template-columns: 1fr; } }
